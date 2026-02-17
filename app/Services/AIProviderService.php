@@ -33,6 +33,8 @@ class AIProviderService
 
             return $description;
         } catch (\Exception $e) {
+            \Log::error("[AIProviderService] Description generation failed for product #{$product->id} ({$product->name}): {$e->getMessage()}");
+
             $product->update(['status' => 'failed']);
             throw $e;
         }
