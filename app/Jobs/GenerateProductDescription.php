@@ -3,8 +3,8 @@
 namespace App\Jobs;
 
 use App\Models\Product;
-use App\Services\ModelService;
-use App\Interfaces\ModelInterface;
+use App\Services\AIProviderService;
+use App\Interfaces\AIProviderInterface;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 
@@ -20,9 +20,9 @@ class GenerateProductDescription implements ShouldQueue
         private Product $product,
     ) {}
 
-    public function handle(ModelService $modelService): void
+    public function handle(AIProviderService $aiProviderService): void
     {
-        $modelService->generate($this->product);
+        $aiProviderService->generate($this->product);
     }
 
     public function failed(\Throwable $e): void

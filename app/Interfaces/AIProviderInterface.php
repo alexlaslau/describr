@@ -2,7 +2,7 @@
 
 namespace App\Interfaces;
 
-interface ModelInterface
+interface AIProviderInterface
 {
     public function generate(string $prompt): string;
 }

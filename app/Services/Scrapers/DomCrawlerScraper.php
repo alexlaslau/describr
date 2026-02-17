@@ -9,7 +9,14 @@ use Symfony\Component\DomCrawler\Crawler;
 
 class DomCrawlerScraper implements ScraperInterface
 {
-    public function fetchHtml(string $url): string
+    public function scrape(string $url): ScrapedData
+    {
+        $html = $this->fetchHtml($url);
+
+        return $this->parse($html);
+    }
+
+    private function fetchHtml(string $url): string
     {
         $response = Http::timeout(30)
             ->withHeaders([
@@ -24,7 +31,7 @@ class DomCrawlerScraper implements ScraperInterface
         return $response->body();
     }
 
-    public function parse(string $html): ScrapedData
+    private function parse(string $html): ScrapedData
     {
         $crawler = new Crawler($html);
 
@@ -37,13 +44,6 @@ class DomCrawlerScraper implements ScraperInterface
             jsonLd: $this->extractJsonLd($crawler),
             bodyText: $this->extractBodyText($crawler)
         );
-    }
-
-    public function scrape(string $url): ScrapedData
-    {
-        $html = $this->fetchHtml($url);
-
-        return $this->parse($html);
     }
 
     private function extractTitle(Crawler $crawler): ?string

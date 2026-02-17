@@ -3,14 +3,14 @@
 namespace App\Services;
 
 use App\Models\Product;
-use App\Interfaces\ModelInterface;
+use App\Interfaces\AIProviderInterface;
 use App\Models\GeneratedDescription;
 use App\Exceptions\EmptyScrapedContentException;
 
-class ModelService
+class AIProviderService
 {
     public function __construct(
-        private ModelInterface $model,
+        private AIProviderInterface $model,
     ) {}
 
     public function generate(Product $product): GeneratedDescription
