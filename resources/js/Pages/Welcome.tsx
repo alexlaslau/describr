@@ -20,9 +20,7 @@ export default function Welcome({ auth, canLogin, canRegister, stats }: WelcomeP
             <div className="min-h-screen bg-white">
                 {/* Nav */}
                 <nav className="flex items-center justify-between border-b border-gray-100 px-8 py-5 lg:px-16">
-                    <span className="text-lg font-semibold tracking-tight text-gray-900">
-                        Describr
-                    </span>
+                    <img src="/favicon.png" alt="Describr" className="h-8 w-auto" />
                     <div className="flex items-center gap-3">
                         {isLoggedIn ? (
                             <Link
