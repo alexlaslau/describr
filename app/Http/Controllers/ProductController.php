@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
-use Illuminate\Http\Request;
+use App\Http\Requests\StoreProductRequest;
 use Illuminate\Support\Facades\Auth;
 use App\Jobs\ScrapeProduct;
 use Inertia\Inertia;
@@ -33,18 +33,12 @@ class ProductController extends Controller
         return Inertia::render('Products/Create');
     }
 
-    public function store(Request $request)
+    public function store(StoreProductRequest $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'links' => 'required|array|min:1',
-            'links.*' => 'required|url',
-        ]);
-
         $product = Product::createWithLinks(
             Auth::user(),
-            $validated['name'],
-            $validated['links'],
+            $request->validated('name'),
+            $request->cleanedLinks(),
         );
 
         ScrapeProduct::dispatch($product);
