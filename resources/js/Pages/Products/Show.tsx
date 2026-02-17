@@ -113,7 +113,7 @@ export default function Show({ product }: PageProps<{ product: Product }>) {
                             type="button"
                             className="rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-medium text-white shadow-sm shadow-indigo-600/20 transition-all hover:bg-indigo-700 hover:shadow-md hover:shadow-indigo-600/25 active:scale-[0.98]"
                         >
-                            Re-generate
+                            Generate
                         </button>
                     </div>
                 </div>

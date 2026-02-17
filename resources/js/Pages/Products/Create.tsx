@@ -169,7 +169,7 @@ export default function Create({ }: PageProps) {
                                             if (nameError) setNameError('');
                                         }}
                                         onKeyDown={(e) => e.key === 'Enter' && goToLinks()}
-                                        placeholder="e.g. Nike Air Max 90"
+                                        placeholder="e.g. Red funny cat toy"
                                         className={`mt-3 block w-full rounded-xl border-2 bg-gray-50/50 px-5 py-3.5 text-base text-gray-900 placeholder:text-gray-400 focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all ${nameError
                                             ? 'border-red-300 focus:border-red-500 focus:ring-red-500/20'
                                             : 'border-gray-200'
