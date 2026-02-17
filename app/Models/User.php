@@ -35,4 +35,21 @@ class User extends Authenticatable
     {
         return $this->hasMany(Product::class);
     }
+
+    public function getProducts()
+    {
+        return $this->products()
+            ->withLinkCount()
+            ->latest()
+            ->get();
+    }
+
+    public function getProductStats(): array
+    {
+        return [
+            'total' => $this->products()->count(),
+            'completed' => $this->products()->completed()->count(),
+            'inProgress' => $this->products()->inProgress()->count(),
+        ];
+    }
 }

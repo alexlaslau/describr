@@ -12,7 +12,7 @@ function StepIndicator({ currentStep }: { currentStep: number }) {
                 <div key={label} className="flex items-center gap-2">
                     <div className="flex items-center gap-2">
                         <span
-                            className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-medium transition-colors ${i < currentStep
+                            className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium transition-colors ${i < currentStep
                                 ? 'bg-indigo-600 text-white'
                                 : i === currentStep
                                     ? 'bg-indigo-600 text-white'
@@ -138,7 +138,7 @@ export default function Create({ }: PageProps) {
                     Back to Products
                 </Link>
 
-                <h1 className="mt-6 text-2xl font-semibold tracking-tight text-gray-900">
+                <h1 className="mt-6 text-3xl font-semibold tracking-tight text-gray-900">
                     New Product
                 </h1>
 
@@ -153,7 +153,7 @@ export default function Create({ }: PageProps) {
                     {step === 0 && (
                         <div className="space-y-6">
                             <div>
-                                <label htmlFor="product-name" className="block text-sm font-medium text-gray-700">
+                                <label htmlFor="product-name" className="block text-base font-medium text-gray-700">
                                     Product Name
                                 </label>
                                 <input
@@ -166,7 +166,7 @@ export default function Create({ }: PageProps) {
                                     }}
                                     onKeyDown={(e) => e.key === 'Enter' && goToLinks()}
                                     placeholder="e.g. Nike Air Max 90"
-                                    className={`mt-2 block w-full rounded-lg border px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-600 transition ${nameError
+                                    className={`mt-2 block w-full rounded-xl border px-5 py-3.5 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-600 transition ${nameError
                                         ? 'border-red-300 focus:ring-red-500'
                                         : 'border-gray-200'
                                         }`}
@@ -181,7 +181,7 @@ export default function Create({ }: PageProps) {
                                 <button
                                     type="button"
                                     onClick={goToLinks}
-                                    className="rounded-lg bg-indigo-600 px-6 py-2.5 text-sm font-medium text-white transition hover:bg-indigo-700"
+                                    className="rounded-xl bg-indigo-600 px-8 py-3 text-base font-medium text-white transition hover:bg-indigo-700"
                                 >
                                     Next
                                 </button>
@@ -193,10 +193,10 @@ export default function Create({ }: PageProps) {
                     {step === 1 && (
                         <div className="space-y-6">
                             <div>
-                                <label className="block text-sm font-medium text-gray-700">
+                                <label className="block text-base font-medium text-gray-700">
                                     Product URLs
                                 </label>
-                                <p className="mt-1 text-sm text-gray-400">
+                                <p className="mt-1 text-base text-gray-400">
                                     Add links to pages containing product information.
                                 </p>
                             </div>
@@ -210,7 +210,7 @@ export default function Create({ }: PageProps) {
                                                 value={link}
                                                 onChange={(e) => updateLink(index, e.target.value)}
                                                 placeholder="https://example.com/product"
-                                                className={`block w-full rounded-lg border px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-600 transition ${linkErrors[index]
+                                                className={`block w-full rounded-xl border px-5 py-3.5 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-600 transition ${linkErrors[index]
                                                     ? 'border-red-300 focus:ring-red-500'
                                                     : 'border-gray-200'
                                                     }`}
@@ -220,7 +220,7 @@ export default function Create({ }: PageProps) {
                                                 <button
                                                     type="button"
                                                     onClick={() => removeLink(index)}
-                                                    className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg text-gray-300 transition hover:bg-red-50 hover:text-red-500"
+                                                    className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl text-gray-300 transition hover:bg-red-50 hover:text-red-500"
                                                 >
                                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                                                         <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
@@ -238,7 +238,7 @@ export default function Create({ }: PageProps) {
                             <button
                                 type="button"
                                 onClick={addLink}
-                                className="inline-flex items-center gap-1.5 text-sm font-medium text-indigo-600 transition hover:text-indigo-700"
+                                className="inline-flex items-center gap-2 text-base font-medium text-indigo-600 transition hover:text-indigo-700"
                             >
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                                     <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
@@ -250,14 +250,14 @@ export default function Create({ }: PageProps) {
                                 <button
                                     type="button"
                                     onClick={() => setStep(0)}
-                                    className="rounded-lg border border-gray-200 px-6 py-2.5 text-sm font-medium text-gray-600 transition hover:border-gray-300 hover:text-gray-900"
+                                    className="rounded-xl border border-gray-200 px-8 py-3 text-base font-medium text-gray-600 transition hover:border-gray-300 hover:text-gray-900"
                                 >
                                     Back
                                 </button>
                                 <button
                                     type="button"
                                     onClick={goToReview}
-                                    className="rounded-lg bg-indigo-600 px-6 py-2.5 text-sm font-medium text-white transition hover:bg-indigo-700"
+                                    className="rounded-xl bg-indigo-600 px-8 py-3 text-base font-medium text-white transition hover:bg-indigo-700"
                                 >
                                     Next
                                 </button>
@@ -270,19 +270,19 @@ export default function Create({ }: PageProps) {
                         <div className="space-y-8">
                             <div className="rounded-xl border border-gray-100 p-6">
                                 <div>
-                                    <p className="text-xs font-medium uppercase tracking-wider text-gray-400">
+                                    <p className="text-sm font-medium uppercase tracking-wider text-gray-400">
                                         Product Name
                                     </p>
-                                    <p className="mt-1 text-base font-medium text-gray-900">{name}</p>
+                                    <p className="mt-1 text-lg font-medium text-gray-900">{name}</p>
                                 </div>
 
                                 <div className="mt-6">
-                                    <p className="text-xs font-medium uppercase tracking-wider text-gray-400">
+                                    <p className="text-sm font-medium uppercase tracking-wider text-gray-400">
                                         Links ({links.length})
                                     </p>
                                     <ul className="mt-2 space-y-2">
                                         {links.map((link, i) => (
-                                            <li key={i} className="flex items-center gap-2 text-sm text-gray-600">
+                                            <li key={i} className="flex items-center gap-2 text-base text-gray-600">
                                                 <span className="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-gray-300" />
                                                 <span className="truncate">{link}</span>
                                             </li>
@@ -295,7 +295,7 @@ export default function Create({ }: PageProps) {
                                 <button
                                     type="button"
                                     onClick={() => setStep(1)}
-                                    className="rounded-lg border border-gray-200 px-6 py-2.5 text-sm font-medium text-gray-600 transition hover:border-gray-300 hover:text-gray-900"
+                                    className="rounded-xl border border-gray-200 px-8 py-3 text-base font-medium text-gray-600 transition hover:border-gray-300 hover:text-gray-900"
                                 >
                                     Back
                                 </button>
@@ -303,7 +303,7 @@ export default function Create({ }: PageProps) {
                                     type="button"
                                     onClick={handleSubmit}
                                     disabled={submitting}
-                                    className="rounded-lg bg-indigo-600 px-6 py-2.5 text-sm font-medium text-white transition hover:bg-indigo-700 disabled:opacity-50"
+                                    className="rounded-xl bg-indigo-600 px-8 py-3 text-base font-medium text-white transition hover:bg-indigo-700 disabled:opacity-50"
                                 >
                                     {submitting ? 'Creating…' : 'Create Product'}
                                 </button>

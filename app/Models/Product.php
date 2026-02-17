@@ -54,4 +54,21 @@ class Product extends Model
     {
         return $query->whereNotIn('status', ['completed', 'failed', 'pending']);
     }
+
+    public static function createWithLinks(User $user, string $name, array $urls): static
+    {
+        $product = $user->products()->create([
+            'name' => $name,
+            'status' => 'pending',
+        ]);
+
+        foreach ($urls as $url) {
+            $product->productLinks()->create([
+                'url' => $url,
+                'status' => 'pending',
+            ]);
+        }
+
+        return $product;
+    }
 }

@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
-use App\Services\ProductService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -14,7 +13,7 @@ Route::get('/', function () {
     ];
 
     if ($user = Auth::user()) {
-        $props['stats'] = app(ProductService::class)->getProductStats($user);
+        $props['stats'] = $user->getProductStats();
     }
 
     return Inertia::render('Welcome', $props);
