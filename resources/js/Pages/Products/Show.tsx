@@ -3,19 +3,20 @@ import { Product, ProductLink, ScrapeResult, PageProps } from '@/types';
 import { Head, Link } from '@inertiajs/react';
 import { useState } from 'react';
 
-const STATUS_STYLES: Record<string, { bg: string; text: string; label: string }> = {
-    pending: { bg: 'bg-gray-100', text: 'text-gray-600', label: 'Pending' },
-    scraping: { bg: 'bg-amber-50', text: 'text-amber-700', label: 'Scraping' },
-    scraped: { bg: 'bg-blue-50', text: 'text-blue-700', label: 'Scraped' },
-    generating: { bg: 'bg-purple-50', text: 'text-purple-700', label: 'Generating' },
-    completed: { bg: 'bg-green-50', text: 'text-green-700', label: 'Completed' },
-    failed: { bg: 'bg-red-50', text: 'text-red-700', label: 'Failed' },
+const STATUS_STYLES: Record<string, { bg: string; text: string; label: string; dot: string }> = {
+    pending: { bg: 'bg-gray-50', text: 'text-gray-600', label: 'Pending', dot: 'bg-gray-400' },
+    scraping: { bg: 'bg-amber-50', text: 'text-amber-700', label: 'Scraping', dot: 'bg-amber-500' },
+    scraped: { bg: 'bg-blue-50', text: 'text-blue-700', label: 'Scraped', dot: 'bg-blue-500' },
+    generating: { bg: 'bg-purple-50', text: 'text-purple-700', label: 'Generating', dot: 'bg-purple-500' },
+    completed: { bg: 'bg-emerald-50', text: 'text-emerald-700', label: 'Completed', dot: 'bg-emerald-500' },
+    failed: { bg: 'bg-red-50', text: 'text-red-700', label: 'Failed', dot: 'bg-red-500' },
 };
 
 function StatusBadge({ status }: { status: string }) {
     const style = STATUS_STYLES[status] || STATUS_STYLES.pending;
     return (
-        <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${style.bg} ${style.text}`}>
+        <span className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-medium ${style.bg} ${style.text} border-current/10`}>
+            <span className={`h-1.5 w-1.5 rounded-full ${style.dot}`} />
             {style.label}
         </span>
     );
@@ -37,15 +38,15 @@ function ScrapeResultCard({ result }: { result: ScrapeResult }) {
     const isLong = result.result.length > 300;
 
     return (
-        <div className="rounded-lg border border-gray-100 p-5">
-            <h4 className="text-sm font-medium text-gray-900">{result.title}</h4>
+        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition-shadow hover:shadow-md">
+            <h4 className="text-sm font-semibold text-gray-900">{result.title}</h4>
             <div className="mt-3 text-sm leading-relaxed text-gray-600">
                 {isLong && !expanded ? (
                     <>
                         {result.result.slice(0, 300)}…
                         <button
                             onClick={() => setExpanded(true)}
-                            className="ml-1 text-indigo-600 hover:text-indigo-700"
+                            className="ml-1 font-medium text-indigo-600 hover:text-indigo-700"
                         >
                             Show more
                         </button>
@@ -56,7 +57,7 @@ function ScrapeResultCard({ result }: { result: ScrapeResult }) {
                         {isLong && (
                             <button
                                 onClick={() => setExpanded(false)}
-                                className="ml-1 text-indigo-600 hover:text-indigo-700"
+                                className="ml-1 font-medium text-indigo-600 hover:text-indigo-700"
                             >
                                 Show less
                             </button>
@@ -76,41 +77,41 @@ export default function Show({ product }: PageProps<{ product: Product }>) {
         <AuthenticatedLayout>
             <Head title={product.name} />
 
-            <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
+            <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
                 {/* Back */}
                 <Link
                     href={route('products.index')}
-                    className="inline-flex items-center gap-1.5 text-sm text-gray-400 transition hover:text-gray-600"
+                    className="group inline-flex items-center gap-1.5 text-sm text-gray-400 transition hover:text-gray-600"
                 >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" viewBox="0 0 20 20" fill="currentColor">
                         <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
                     </svg>
                     Back to Products
                 </Link>
 
                 {/* Header */}
-                <div className="mt-6 flex items-start justify-between">
+                <div className="mt-8 flex items-start justify-between">
                     <div>
                         <div className="flex items-center gap-3">
-                            <h1 className="text-2xl font-semibold tracking-tight text-gray-900">
+                            <h1 className="text-2xl font-bold tracking-tight text-gray-900">
                                 {product.name}
                             </h1>
                             <StatusBadge status={product.status} />
                         </div>
-                        <p className="mt-1 text-sm text-gray-400">
+                        <p className="mt-2 text-sm text-gray-400">
                             Created {formatDate(product.created_at)}
                         </p>
                     </div>
                     <div className="flex items-center gap-3">
                         <Link
                             href={route('products.create')}
-                            className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-600 transition hover:border-gray-300 hover:text-gray-900"
+                            className="rounded-xl border-2 border-gray-200 px-5 py-2.5 text-sm font-medium text-gray-600 transition-all hover:border-gray-300 hover:bg-gray-50 hover:text-gray-900"
                         >
                             Add Links
                         </Link>
                         <button
                             type="button"
-                            className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-indigo-700"
+                            className="rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-medium text-white shadow-sm shadow-indigo-600/20 transition-all hover:bg-indigo-700 hover:shadow-md hover:shadow-indigo-600/25 active:scale-[0.98]"
                         >
                             Re-generate
                         </button>
@@ -118,24 +119,30 @@ export default function Show({ product }: PageProps<{ product: Product }>) {
                 </div>
 
                 {/* Generated Description */}
-                <section className="mt-10">
-                    <h2 className="text-sm font-semibold uppercase tracking-wider text-gray-400">
+                <section className="mt-12">
+                    <h2 className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
                         Generated Description
                     </h2>
                     {product.generated_description ? (
-                        <div className="mt-4 rounded-xl border border-gray-100 bg-gray-50/50 p-6">
+                        <div className="mt-4 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
                             <p className="whitespace-pre-wrap text-sm leading-relaxed text-gray-700">
                                 {product.generated_description}
                             </p>
                             {product.generated_at && (
-                                <p className="mt-4 text-xs text-gray-400">
+                                <p className="mt-5 border-t border-gray-100 pt-4 text-xs text-gray-400">
                                     Generated {formatDate(product.generated_at)}
                                 </p>
                             )}
                         </div>
                     ) : (
-                        <div className="mt-4 rounded-xl border border-dashed border-gray-200 p-8 text-center">
-                            <p className="text-sm text-gray-400">
+                        <div className="mt-4 rounded-2xl border-2 border-dashed border-gray-200 p-10 text-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="mx-auto h-8 w-8 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                            <p className="mt-3 text-sm text-gray-400">
                                 No description generated yet. The AI will create one after scraping completes.
                             </p>
                         </div>
@@ -143,44 +150,55 @@ export default function Show({ product }: PageProps<{ product: Product }>) {
                 </section>
 
                 {/* Links */}
-                <section className="mt-10">
-                    <h2 className="text-sm font-semibold uppercase tracking-wider text-gray-400">
+                <section className="mt-12">
+                    <h2 className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                        </svg>
                         Links
-                        <span className="ml-2 text-gray-300">({links.length})</span>
+                        <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-500">{links.length}</span>
                     </h2>
                     {links.length === 0 ? (
                         <p className="mt-4 text-sm text-gray-400">No links added yet.</p>
                     ) : (
-                        <div className="mt-4 divide-y divide-gray-100 rounded-xl border border-gray-100">
-                            {links.map((link: ProductLink) => (
-                                <div key={link.id} className="flex items-center justify-between px-5 py-4">
-                                    <div className="min-w-0 flex-1">
-                                        <a
-                                            href={link.url}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="truncate text-sm text-indigo-600 hover:text-indigo-700"
-                                        >
-                                            {link.url}
-                                        </a>
-                                        {link.scraped_at && (
-                                            <p className="mt-0.5 text-xs text-gray-400">
-                                                Scraped {formatDate(link.scraped_at)}
-                                            </p>
-                                        )}
+                        <div className="mt-4 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+                            <div className="divide-y divide-gray-100">
+                                {links.map((link: ProductLink) => (
+                                    <div key={link.id} className="flex items-center justify-between px-6 py-4">
+                                        <div className="min-w-0 flex-1">
+                                            <a
+                                                href={link.url}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="inline-flex items-center gap-2 truncate text-sm font-medium text-indigo-600 transition-colors hover:text-indigo-800"
+                                            >
+                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 flex-shrink-0 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                                </svg>
+                                                {link.url}
+                                            </a>
+                                            {link.scraped_at && (
+                                                <p className="mt-1 text-xs text-gray-400">
+                                                    Scraped {formatDate(link.scraped_at)}
+                                                </p>
+                                            )}
+                                        </div>
+                                        <StatusBadge status={link.status} />
                                     </div>
-                                    <StatusBadge status={link.status} />
-                                </div>
-                            ))}
+                                ))}
+                            </div>
                         </div>
                     )}
                 </section>
 
                 {/* Scrape Results */}
-                <section className="mt-10">
-                    <h2 className="text-sm font-semibold uppercase tracking-wider text-gray-400">
+                <section className="mt-12">
+                    <h2 className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                        </svg>
                         Scrape Results
-                        <span className="ml-2 text-gray-300">({scrapeResults.length})</span>
+                        <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-500">{scrapeResults.length}</span>
                     </h2>
                     {scrapeResults.length === 0 ? (
                         <p className="mt-4 text-sm text-gray-400">No scrape results available yet.</p>
