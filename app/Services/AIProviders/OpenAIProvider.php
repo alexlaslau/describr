@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Services\Models;
+namespace App\Services\AIProviders;
 
 use App\Interfaces\AIProviderInterface;
 use Illuminate\Support\Facades\Http;
 
-class OpenAIModel implements AIProviderInterface
+class OpenAIProvider implements AIProviderInterface
 {
     public function __construct(
         private string $model = 'gpt-4o-mini',
