@@ -39,4 +39,19 @@ class Product extends Model
     {
         return $this->hasMany(ProductLink::class);
     }
+
+    public function scopeWithLinkCount($query)
+    {
+        return $query->withCount('productLinks');
+    }
+
+    public function scopeCompleted($query)
+    {
+        return $query->where('status', 'completed');
+    }
+
+    public function scopeInProgress($query)
+    {
+        return $query->whereNotIn('status', ['completed', 'failed', 'pending']);
+    }
 }
