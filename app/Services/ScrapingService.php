@@ -19,7 +19,7 @@ class ScrapingService
             $result = $this->scraper->scrape($link->url);
 
             $link->update([
-                'raw_html' => $result->rawHtml,
+                'parsed_content' => $result->toPromptText(),
                 'status' => 'scraped',
                 'scraped_at' => now(),
             ]);

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Jobs\ScrapeProduct;
 use Inertia\Inertia;
 
 class ProductController extends Controller
@@ -45,6 +46,8 @@ class ProductController extends Controller
             $validated['name'],
             $validated['links'],
         );
+
+        ScrapeProduct::dispatch($product);
 
         return redirect()->route('products.show', $product);
     }

@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('product_id')->constrained()->cascadeOnDelete();
             $table->text('url');
-            $table->longText('raw_html')->nullable();
+            $table->longText('parsed_content')->nullable();
             $table->enum('status', ['pending', 'scraping', 'scraped', 'failed'])->default('pending');
             $table->text('error_message')->nullable();
             $table->timestamp('scraped_at')->nullable();

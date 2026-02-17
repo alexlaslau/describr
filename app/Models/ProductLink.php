@@ -13,7 +13,7 @@ class ProductLink extends Model
 
     protected $fillable = [
         'url',
-        'raw_html',
+        'parsed_content',
         'status',
         'error_message',
         'scraped_at',

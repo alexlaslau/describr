@@ -12,7 +12,6 @@ class ScrapedData
         public readonly ?string $ogImage = null,
         public readonly ?array $jsonLd = null,
         public readonly ?string $bodyText = null,
-        public readonly ?string $rawHtml = null,
     ) {}
 
     public function toPromptText(): string
@@ -21,6 +20,10 @@ class ScrapedData
 
         if ($this->title) {
             $parts[] = "Page Title: {$this->title}";
+        }
+
+        if ($this->jsonLd) {
+            $parts[] = "Structured Product Data:\n" . json_encode($this->jsonLd, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
         }
 
         if ($this->metaDescription) {
@@ -35,11 +38,8 @@ class ScrapedData
             $parts[] = "OG Description: {$this->ogDescription}";
         }
 
-        if ($this->jsonLd) {
-            $parts[] = "Structured Data:\n" . json_encode($this->jsonLd, JSON_PRETTY_PRINT);
-        }
-
-        if ($this->bodyText) {
+        //Fallback if no jsonLd is present
+        if (!$this->jsonLd && $this->bodyText) {
             $parts[] = "Body Content:\n{$this->bodyText}";
         }
 

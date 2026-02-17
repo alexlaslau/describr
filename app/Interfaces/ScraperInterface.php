@@ -2,6 +2,8 @@
 
 namespace App\Interfaces;
 
+use App\DTOs\ScrapedData;
+
 interface ScraperInterface
 {
     public function fetchHtml(string $url): string;

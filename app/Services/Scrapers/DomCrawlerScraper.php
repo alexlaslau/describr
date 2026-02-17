@@ -35,8 +35,7 @@ class DomCrawlerScraper implements ScraperInterface
             ogDescription: $this->extractOg($crawler, 'og:description'),
             ogImage: $this->extractOg($crawler, 'og:image'),
             jsonLd: $this->extractJsonLd($crawler),
-            bodyText: $this->extractBodyText($crawler),
-            rawHtml: $html,
+            bodyText: $this->extractBodyText($crawler)
         );
     }
 
