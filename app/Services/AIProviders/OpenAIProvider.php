@@ -34,5 +34,4 @@ class OpenAIProvider implements AIProviderInterface
 
         return $generatedText;
     }
-
 }

@@ -42,7 +42,7 @@ class AIProviderService
 
     private function getProductDescription(Product $product): string
     {
-        $scrapedContent = $product->getSourcesText();
+        $scrapedContent = $product->getFullParsedText();
 
         if (empty(trim($scrapedContent))) {
             throw new EmptyScrapedContentException();

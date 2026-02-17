@@ -20,29 +20,4 @@ class GeneratedDescription extends Model
     {
         return $this->belongsTo(Product::class);
     }
-
-    public static function generate(Product $product)
-    {
-        $prompt = "Generate a product title and description for the following product: {$product->name}\n\n";
-
-        foreach ($product->links as $link) {
-            $prompt .= "{$link->url}\n";
-        }
-
-        $response = Http::post('https://api.openai.com/v1/chat/completions', [
-            'model' => 'gpt-4.1-mini',
-            'messages' => [
-                [
-                    'role' => 'system',
-                    'content' => 'You are a helpful assistant.',
-                ],
-                [
-                    'role' => 'user',
-                    'content' => $prompt,
-                ],
-            ],
-        ]);
-
-        return $response->json();
-    }
 }
