@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
-use App\Http\Requests\StoreProductRequest;
+use App\Http\Requests\ProductStoreRequest;
 use Illuminate\Support\Facades\Auth;
 use App\Jobs\ScrapeProduct;
 use Inertia\Inertia;
@@ -33,7 +33,7 @@ class ProductController extends Controller
         return Inertia::render('Products/Create');
     }
 
-    public function store(StoreProductRequest $request)
+    public function store(ProductStoreRequest $request)
     {
         $product = Product::createWithLinks(
             Auth::user(),
