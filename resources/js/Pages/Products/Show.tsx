@@ -33,6 +33,29 @@ function formatDate(dateString: string | null | undefined) {
     });
 }
 
+function formatDescription(text: string) {
+    const sections = text.split(/^###\s+/m).filter(Boolean);
+
+    return sections.map((section, i) => {
+        const lines = section.split('\n');
+        const heading = lines[0]?.trim();
+        const body = lines.slice(1).join('\n').trim();
+
+        return (
+            <div key={i} className={i > 0 ? 'mt-6' : ''}>
+                {heading && (
+                    <h2 className="text-lg font-bold text-gray-900 mb-3">{heading}</h2>
+                )}
+                {body && (
+                    <div className="text-sm leading-relaxed text-gray-600 whitespace-pre-line">
+                        {body}
+                    </div>
+                )}
+            </div>
+        );
+    });
+}
+
 function DescriptionCard({ result }: { result: GeneratedDescription }) {
     const [expanded, setExpanded] = useState(false);
     const isLong = result.description.length > 300;
@@ -40,24 +63,26 @@ function DescriptionCard({ result }: { result: GeneratedDescription }) {
     return (
         <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition-shadow hover:shadow-md">
             <h4 className="text-sm font-semibold text-gray-900">{result.title}</h4>
-            <div className="mt-3 text-sm leading-relaxed text-gray-600">
+            <div className="mt-3">
                 {isLong && !expanded ? (
                     <>
-                        {result.description.slice(0, 300)}…
+                        <div className="text-sm leading-relaxed text-gray-600">
+                            {result.description.slice(0, 300)}…
+                        </div>
                         <button
                             onClick={() => setExpanded(true)}
-                            className="ml-1 font-medium text-indigo-600 hover:text-indigo-700"
+                            className="mt-2 font-medium text-sm text-indigo-600 hover:text-indigo-700"
                         >
                             Show more
                         </button>
                     </>
                 ) : (
                     <>
-                        {result.description}
+                        {formatDescription(result.description)}
                         {isLong && (
                             <button
                                 onClick={() => setExpanded(false)}
-                                className="ml-1 font-medium text-indigo-600 hover:text-indigo-700"
+                                className="mt-2 font-medium text-sm text-indigo-600 hover:text-indigo-700"
                             >
                                 Show less
                             </button>
@@ -128,9 +153,9 @@ export default function Show({ product }: PageProps<{ product: Product }>) {
                     </h2>
                     {product.generated_description ? (
                         <div className="mt-4 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-                            <p className="whitespace-pre-wrap text-sm leading-relaxed text-gray-700">
-                                {product.generated_description}
-                            </p>
+                            <div className="text-sm leading-relaxed text-gray-700">
+                                {formatDescription(product.generated_description)}
+                            </div>
                             {product.generated_at && (
                                 <p className="mt-5 border-t border-gray-100 pt-4 text-xs text-gray-400">
                                     Generated {formatDate(product.generated_at)}
