@@ -234,18 +234,18 @@ export default function Show({ product }: PageProps<{ product: Product }>) {
                         <div className="mt-4 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
                             <div className="divide-y divide-gray-100">
                                 {links.map((link: ProductLink) => (
-                                    <div key={link.id} className="flex items-center justify-between px-6 py-4">
+                                    <div key={link.id} className="flex items-center justify-between gap-4 px-6 py-4">
                                         <div className="min-w-0 flex-1">
                                             <a
                                                 href={link.url}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className="inline-flex items-center gap-2 truncate text-sm font-medium text-indigo-600 transition-colors hover:text-indigo-800"
+                                                className="flex items-center gap-2 text-sm font-medium text-indigo-600 transition-colors hover:text-indigo-800"
                                             >
                                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 flex-shrink-0 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                                                 </svg>
-                                                {link.url}
+                                                <span className="truncate">{link.url}</span>
                                             </a>
                                             {link.scraped_at && (
                                                 <p className="mt-1 text-xs text-gray-400">
@@ -253,7 +253,9 @@ export default function Show({ product }: PageProps<{ product: Product }>) {
                                                 </p>
                                             )}
                                         </div>
-                                        <StatusBadge status={link.status} />
+                                        <div className="flex-shrink-0">
+                                            <StatusBadge status={link.status} />
+                                        </div>
                                     </div>
                                 ))}
                             </div>
