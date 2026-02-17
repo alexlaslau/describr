@@ -8,11 +8,11 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('scrape_results', function (Blueprint $table) {
+        Schema::create('generated_descriptions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('product_id')->constrained()->cascadeOnDelete();
             $table->string('title')->nullable();
-            $table->longText('result')->nullable();
+            $table->longText('description')->nullable();
             $table->timestamps();
 
             $table->index('product_id');
@@ -21,6 +21,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('scrape_results');
+        Schema::dropIfExists('generated_descriptions');
     }
-};
+}; 

@@ -30,9 +30,9 @@ class Product extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function scrapeResults(): HasMany
+    public function generatedDescriptions(): HasMany
     {
-        return $this->hasMany(ScrapeResult::class);
+        return $this->hasMany(GeneratedDescription::class);
     }
 
     public function productLinks(): HasMany

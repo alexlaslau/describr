@@ -6,13 +6,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class ScrapeResult extends Model
+class GeneratedDescription extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'title',
-        'result',
+        'description',
     ];
 
     public function product(): BelongsTo

@@ -1,5 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Product, ProductLink, ScrapeResult, PageProps } from '@/types';
+import { Product, ProductLink, GeneratedDescription, PageProps } from '@/types';
 import { Head, Link } from '@inertiajs/react';
 import { useState } from 'react';
 
@@ -33,9 +33,9 @@ function formatDate(dateString: string | null | undefined) {
     });
 }
 
-function ScrapeResultCard({ result }: { result: ScrapeResult }) {
+function DescriptionCard({ result }: { result: GeneratedDescription }) {
     const [expanded, setExpanded] = useState(false);
-    const isLong = result.result.length > 300;
+    const isLong = result.description.length > 300;
 
     return (
         <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition-shadow hover:shadow-md">
@@ -43,7 +43,7 @@ function ScrapeResultCard({ result }: { result: ScrapeResult }) {
             <div className="mt-3 text-sm leading-relaxed text-gray-600">
                 {isLong && !expanded ? (
                     <>
-                        {result.result.slice(0, 300)}…
+                        {result.description.slice(0, 300)}…
                         <button
                             onClick={() => setExpanded(true)}
                             className="ml-1 font-medium text-indigo-600 hover:text-indigo-700"
@@ -53,7 +53,7 @@ function ScrapeResultCard({ result }: { result: ScrapeResult }) {
                     </>
                 ) : (
                     <>
-                        {result.result}
+                        {result.description}
                         {isLong && (
                             <button
                                 onClick={() => setExpanded(false)}
@@ -71,7 +71,7 @@ function ScrapeResultCard({ result }: { result: ScrapeResult }) {
 
 export default function Show({ product }: PageProps<{ product: Product }>) {
     const links = product.product_links ?? [];
-    const scrapeResults = product.scrape_results ?? [];
+    const descriptions = product.generated_descriptions ?? [];
 
     return (
         <AuthenticatedLayout>
@@ -197,15 +197,15 @@ export default function Show({ product }: PageProps<{ product: Product }>) {
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
                         </svg>
-                        Scrape Results
-                        <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-500">{scrapeResults.length}</span>
+                        Generated Descriptions
+                        <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-500">{descriptions.length}</span>
                     </h2>
-                    {scrapeResults.length === 0 ? (
-                        <p className="mt-4 text-sm text-gray-400">No scrape results available yet.</p>
+                    {descriptions.length === 0 ? (
+                        <p className="mt-4 text-sm text-gray-400">No generated descriptions available yet.</p>
                     ) : (
                         <div className="mt-4 space-y-4">
-                            {scrapeResults.map((result: ScrapeResult) => (
-                                <ScrapeResultCard key={result.id} result={result} />
+                            {descriptions.map((result: GeneratedDescription) => (
+                                <DescriptionCard key={result.id} result={result} />
                             ))}
                         </div>
                     )}

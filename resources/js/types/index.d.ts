@@ -16,11 +16,11 @@ export interface ProductLink {
     updated_at: string;
 }
 
-export interface ScrapeResult {
+export interface GeneratedDescription {
     id: number;
     product_id: number;
     title: string;
-    result: string;
+    description: string;
     created_at: string;
     updated_at: string;
 }
@@ -34,7 +34,7 @@ export interface Product {
     generated_at?: string | null;
     product_links_count?: number;
     product_links?: ProductLink[];
-    scrape_results?: ScrapeResult[];
+    generated_descriptions?: GeneratedDescription[];
     created_at: string;
     updated_at: string;
 }
