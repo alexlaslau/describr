@@ -14,6 +14,14 @@ return [
     |
     */
 
+    'describr' => [
+        'max_characters_per_source' => 5000,
+    ],
+
+    'openai' => [
+        'key' => env('OPENAI_API_KEY'),
+    ],
+
     'postmark' => [
         'key' => env('POSTMARK_API_KEY'),
     ],

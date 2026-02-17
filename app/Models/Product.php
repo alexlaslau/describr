@@ -71,4 +71,21 @@ class Product extends Model
 
         return $product;
     }
+
+    public function getSourcesText(): string
+    {
+        $maxPerSource = config('services.describr.max_characters_per_source');
+
+        return $this->productLinks()
+            ->where('status', 'scraped')
+            ->pluck('parsed_content')
+            ->map(function ($content, $index) use ($maxPerSource) {
+                $trimmed = mb_strlen($content) > $maxPerSource
+                    ? mb_substr($content, 0, $maxPerSource) . '...[truncated]'
+                    : $content;
+
+                return "--- Source " . ($index + 1) . " ---\n" . $trimmed;
+            })
+            ->implode("\n\n");
+    }
 }
