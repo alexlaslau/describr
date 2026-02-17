@@ -1,7 +1,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Product, ProductLink, GeneratedDescription, PageProps } from '@/types';
-import { Head, Link } from '@inertiajs/react';
-import { useState } from 'react';
+import { Head, Link, router } from '@inertiajs/react';
+import { useState, useEffect } from 'react';
 
 const STATUS_STYLES: Record<string, { bg: string; text: string; label: string; dot: string }> = {
     pending: { bg: 'bg-gray-50', text: 'text-gray-600', label: 'Pending', dot: 'bg-gray-400' },
@@ -94,9 +94,52 @@ function DescriptionCard({ result }: { result: GeneratedDescription }) {
     );
 }
 
+const PROCESSING_STATUSES = ['pending', 'scraping', 'scraped', 'generating'];
+
+const PROCESSING_MESSAGES: Record<string, { title: string; subtitle: string }> = {
+    pending: { title: 'Preparing...', subtitle: 'Getting ready to scrape your product links.' },
+    scraping: { title: 'Scraping links...', subtitle: 'Fetching product data from your links.' },
+    scraped: { title: 'Links scraped!', subtitle: 'Preparing to generate your description...' },
+    generating: { title: 'Generating description...', subtitle: 'The AI is writing your product description.' },
+};
+
+function ProcessingBanner({ status }: { status: string }) {
+    const info = PROCESSING_MESSAGES[status];
+    if (!info) return null;
+
+    return (
+        <div className="mt-4 rounded-2xl border border-indigo-100 bg-gradient-to-r from-indigo-50 to-purple-50 p-8 text-center">
+            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center">
+                <svg className="h-8 w-8 animate-spin text-indigo-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                </svg>
+            </div>
+            <h3 className="text-base font-semibold text-gray-900">{info.title}</h3>
+            <p className="mt-1 text-sm text-gray-500">{info.subtitle}</p>
+            <div className="mt-4 flex justify-center gap-1.5">
+                <span className="h-2 w-2 animate-bounce rounded-full bg-indigo-400" style={{ animationDelay: '0ms' }} />
+                <span className="h-2 w-2 animate-bounce rounded-full bg-indigo-400" style={{ animationDelay: '150ms' }} />
+                <span className="h-2 w-2 animate-bounce rounded-full bg-indigo-400" style={{ animationDelay: '300ms' }} />
+            </div>
+        </div>
+    );
+}
+
 export default function Show({ product }: PageProps<{ product: Product }>) {
     const links = product.product_links ?? [];
     const descriptions = product.generated_descriptions ?? [];
+    const isProcessing = PROCESSING_STATUSES.includes(product.status);
+
+    useEffect(() => {
+        if (!isProcessing) return;
+
+        const interval = setInterval(() => {
+            router.reload({ only: ['product'] });
+        }, 3000);
+
+        return () => clearInterval(interval);
+    }, [isProcessing]);
 
     return (
         <AuthenticatedLayout>
@@ -162,13 +205,15 @@ export default function Show({ product }: PageProps<{ product: Product }>) {
                                 </p>
                             )}
                         </div>
+                    ) : isProcessing ? (
+                        <ProcessingBanner status={product.status} />
                     ) : (
                         <div className="mt-4 rounded-2xl border-2 border-dashed border-gray-200 p-10 text-center">
                             <svg xmlns="http://www.w3.org/2000/svg" className="mx-auto h-8 w-8 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                             </svg>
                             <p className="mt-3 text-sm text-gray-400">
-                                No description generated yet. The AI will create one after scraping completes.
+                                No description generated yet. Click Generate to create one.
                             </p>
                         </div>
                     )}
