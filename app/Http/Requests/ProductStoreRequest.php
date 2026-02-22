@@ -17,6 +17,7 @@ class ProductStoreRequest extends FormRequest
             'name' => 'required|string|max:255',
             'links' => 'required|array|min:1',
             'links.*' => 'required|url|max:1024',
+            'ai_provider' => 'required|string|in:openai,anthropic',
         ];
     }
 

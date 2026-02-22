@@ -4,12 +4,15 @@ namespace App\Services;
 
 use App\Models\Product;
 use App\Models\GeneratedDescription;
+use App\Interfaces\AIProviderInterface;
 use App\Exceptions\EmptyScrapedContentException;
 use App\Services\AIProviders\AIProviderFactory;
 use Illuminate\Support\Facades\Log;
 
 class AIProviderService
 {
+    private AIProviderInterface $aiProvider;
+
     public function __construct(
         private AIProviderFactory $factory,
     ) {}
@@ -18,8 +21,10 @@ class AIProviderService
     {
         $product->update(['status' => 'generating']);
 
+        $this->aiProvider = $this->resolveProvider($provider);
+
         try {
-            $response = $this->getProductDescription($product, $provider);
+            $response = $this->getProductDescription($product);
 
             $description = $product->generatedDescriptions()->create([
                 'title' => $product->name,
@@ -41,7 +46,12 @@ class AIProviderService
         }
     }
 
-    private function getProductDescription(Product $product, string $provider): string
+    private function resolveProvider(string $provider): AIProviderInterface
+    {
+        return $this->factory->make($provider);
+    }
+
+    private function getProductDescription(Product $product): string
     {
         $scrapedContent = $product->getFullParsedText();
 
@@ -51,9 +61,7 @@ class AIProviderService
 
         $prompt = $this->buildPrompt($product->name, $scrapedContent);
 
-        $model = $this->factory->make($provider);
-
-        return $model->generate($prompt);
+        return $this->aiProvider->generate($prompt);
     }
 
     private function buildPrompt(string $productName, string $scrapedContent): string

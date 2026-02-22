@@ -22,6 +22,10 @@ return [
         'key' => env('OPENAI_API_KEY'),
     ],
 
+    'anthropic' => [
+        'key' => env('ANTHROPIC_API_KEY'),
+    ],
+
     'postmark' => [
         'key' => env('POSTMARK_API_KEY'),
     ],

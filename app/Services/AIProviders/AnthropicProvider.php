@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Http;
 class AnthropicProvider implements AIProviderInterface
 {
     public function __construct(
-        private string $model = 'claude-3-5-haiku-20241022',
+        private string $model = 'claude-haiku-4-5-20251001',
         private int $maxTokens = 4096,
         private int $timeout = 120,
     ) {}

@@ -59,6 +59,7 @@ export default function Create({ }: PageProps) {
     const [step, setStep] = useState(0);
     const [name, setName] = useState('');
     const [links, setLinks] = useState<string[]>(['']);
+    const [aiProvider, setAiProvider] = useState<'openai' | 'anthropic'>('openai');
     const [nameError, setNameError] = useState('');
     const [linkErrors, setLinkErrors] = useState<string[]>(['']);
     const [submitting, setSubmitting] = useState(false);
@@ -117,6 +118,7 @@ export default function Create({ }: PageProps) {
         router.post(route('products.store'), {
             name: name.trim(),
             links: links.map((l) => l.trim()),
+            ai_provider: aiProvider,
         }, {
             onFinish: () => setSubmitting(false),
         });
@@ -310,6 +312,42 @@ export default function Create({ }: PageProps) {
                                                 </li>
                                             ))}
                                         </ul>
+                                    </div>
+
+                                    <div className="mt-8">
+                                        <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">
+                                            AI Engine
+                                        </p>
+                                        <div className="mt-3 flex gap-3">
+                                            {[
+                                                { value: 'openai' as const, label: 'OpenAI', desc: 'GPT-4o mini · Cheaper, lower quality' },
+                                                { value: 'anthropic' as const, label: 'Anthropic', desc: 'Claude Haiku 4.5 · Better quality, higher cost' },
+                                            ].map((option) => (
+                                                <label
+                                                    key={option.value}
+                                                    className={`flex flex-1 cursor-pointer items-center gap-3 rounded-xl border-2 px-5 py-4 transition-all ${aiProvider === option.value
+                                                            ? 'border-indigo-500 bg-indigo-50/50 shadow-sm shadow-indigo-500/10'
+                                                            : 'border-gray-200 bg-gray-50/30 hover:border-gray-300 hover:bg-gray-50'
+                                                        }`}
+                                                >
+                                                    <input
+                                                        type="radio"
+                                                        name="ai_provider"
+                                                        value={option.value}
+                                                        checked={aiProvider === option.value}
+                                                        onChange={() => setAiProvider(option.value)}
+                                                        className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                                    />
+                                                    <div>
+                                                        <p className={`text-sm font-semibold ${aiProvider === option.value ? 'text-indigo-900' : 'text-gray-700'
+                                                            }`}>
+                                                            {option.label}
+                                                        </p>
+                                                        <p className="text-xs text-gray-500">{option.desc}</p>
+                                                    </div>
+                                                </label>
+                                            ))}
+                                        </div>
                                     </div>
                                 </div>
                             </div>

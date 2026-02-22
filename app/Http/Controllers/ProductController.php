@@ -41,7 +41,7 @@ class ProductController extends Controller
             $request->cleanedLinks(),
         );
 
-        ScrapeProduct::dispatch($product, 'openai');
+        ScrapeProduct::dispatch($product, $request->validated('ai_provider'));
 
         return redirect()->route('products.show', $product);
     }
