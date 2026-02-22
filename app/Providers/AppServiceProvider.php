@@ -14,7 +14,6 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(ScraperInterface::class, DomCrawlerScraper::class);
-        $this->app->bind(AIProviderInterface::class, OpenAIProvider::class);
     }
 
     public function boot(): void

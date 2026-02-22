@@ -3,22 +3,23 @@
 namespace App\Services;
 
 use App\Models\Product;
-use App\Interfaces\AIProviderInterface;
 use App\Models\GeneratedDescription;
 use App\Exceptions\EmptyScrapedContentException;
+use App\Services\AIProviders\AIProviderFactory;
+use Illuminate\Support\Facades\Log;
 
 class AIProviderService
 {
     public function __construct(
-        private AIProviderInterface $model,
+        private AIProviderFactory $factory,
     ) {}
 
-    public function generate(Product $product): GeneratedDescription
+    public function generate(Product $product, string $provider = 'openai'): GeneratedDescription
     {
         $product->update(['status' => 'generating']);
 
         try {
-            $response = $this->getProductDescription($product);
+            $response = $this->getProductDescription($product, $provider);
 
             $description = $product->generatedDescriptions()->create([
                 'title' => $product->name,
@@ -33,14 +34,14 @@ class AIProviderService
 
             return $description;
         } catch (\Exception $e) {
-            \Log::error("[AIProviderService] Description generation failed for product #{$product->id} ({$product->name}): {$e->getMessage()}");
+            Log::error("[AIProviderService] Description generation failed for product #{$product->id} ({$product->name}): {$e->getMessage()}");
 
             $product->update(['status' => 'failed']);
             throw $e;
         }
     }
 
-    private function getProductDescription(Product $product): string
+    private function getProductDescription(Product $product, string $provider): string
     {
         $scrapedContent = $product->getFullParsedText();
 
@@ -50,7 +51,9 @@ class AIProviderService
 
         $prompt = $this->buildPrompt($product->name, $scrapedContent);
 
-        return $this->model->generate($prompt);
+        $model = $this->factory->make($provider);
+
+        return $model->generate($prompt);
     }
 
     private function buildPrompt(string $productName, string $scrapedContent): string

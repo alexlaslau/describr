@@ -4,7 +4,6 @@ namespace App\Jobs;
 
 use App\Models\Product;
 use App\Services\AIProviderService;
-use App\Interfaces\AIProviderInterface;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 
@@ -18,11 +17,12 @@ class GenerateProductDescription implements ShouldQueue
 
     public function __construct(
         private Product $product,
+        private string $provider = 'openai',
     ) {}
 
     public function handle(AIProviderService $aiProviderService): void
     {
-        $aiProviderService->generate($this->product);
+        $aiProviderService->generate($this->product, $this->provider);
     }
 
     public function failed(\Throwable $e): void

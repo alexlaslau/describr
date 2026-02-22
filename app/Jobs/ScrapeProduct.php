@@ -34,7 +34,7 @@ class ScrapeProduct implements ShouldQueue
         Bus::batch($jobs)
             ->then(function (Batch $batch) use ($product) {
                 $product->update(['status' => 'scraped']);
-                GenerateProductDescription::dispatch($product);
+                GenerateProductDescription::dispatch($product, 'openai');
             })
             ->catch(function (Batch $batch, \Throwable $e) use ($product) {
                 $product->update(['status' => 'failed']);
