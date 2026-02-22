@@ -9,6 +9,8 @@ use Symfony\Component\DomCrawler\Crawler;
 
 class DomCrawlerScraper implements ScraperInterface
 {
+    private Crawler $crawler;
+
     public function scrape(string $url): ScrapedData
     {
         $html = $this->fetchHtml($url);
@@ -33,45 +35,45 @@ class DomCrawlerScraper implements ScraperInterface
 
     private function parse(string $html): ScrapedData
     {
-        $crawler = new Crawler($html);
+        $this->crawler = new Crawler($html);
 
         return new ScrapedData(
-            title: $this->extractTitle($crawler),
-            metaDescription: $this->extractMeta($crawler, 'description'),
-            ogTitle: $this->extractOg($crawler, 'og:title'),
-            ogDescription: $this->extractOg($crawler, 'og:description'),
-            ogImage: $this->extractOg($crawler, 'og:image'),
-            jsonLd: $this->extractJsonLd($crawler),
-            bodyText: $this->extractBodyText($crawler)
+            title: $this->extractTitle(),
+            metaDescription: $this->extractMeta('description'),
+            ogTitle: $this->extractOg('og:title'),
+            ogDescription: $this->extractOg('og:description'),
+            ogImage: $this->extractOg('og:image'),
+            jsonLd: $this->extractJsonLd(),
+            bodyText: $this->extractBodyText()
         );
     }
 
-    private function extractTitle(Crawler $crawler): ?string
+    private function extractTitle(): ?string
     {
-        return $crawler->filter('title')->count()
-            ? trim($crawler->filter('title')->text())
+        return $this->crawler->filter('title')->count()
+            ? trim($this->crawler->filter('title')->text())
             : null;
     }
 
-    private function extractMeta(Crawler $crawler, string $name): ?string
+    private function extractMeta(string $name): ?string
     {
-        $node = $crawler->filter("meta[name=\"{$name}\"]");
+        $node = $this->crawler->filter("meta[name=\"{$name}\"]");
 
         return $node->count() ? $node->attr('content') : null;
     }
 
-    private function extractOg(Crawler $crawler, string $property): ?string
+    private function extractOg(string $property): ?string
     {
-        $node = $crawler->filter("meta[property=\"{$property}\"]");
+        $node = $this->crawler->filter("meta[property=\"{$property}\"]");
 
         return $node->count() ? $node->attr('content') : null;
     }
 
-    private function extractJsonLd(Crawler $crawler): ?array
+    private function extractJsonLd(): ?array
     {
         $jsonLd = null;
 
-        $crawler->filter('script[type="application/ld+json"]')->each(function (Crawler $node) use (&$jsonLd) {
+        $this->crawler->filter('script[type="application/ld+json"]')->each(function (Crawler $node) use (&$jsonLd) {
             $data = json_decode($node->text(), true);
 
             if (!$data) {
@@ -95,18 +97,18 @@ class DomCrawlerScraper implements ScraperInterface
         return $jsonLd;
     }
 
-    private function extractBodyText(Crawler $crawler): ?string
+    private function extractBodyText(): ?string
     {
-        if (!$crawler->filter('body')->count()) {
+        if (!$this->crawler->filter('body')->count()) {
             return null;
         }
 
-        $crawler->filter('script, style, nav, footer, header, iframe, noscript')->each(function (Crawler $node) {
+        $this->crawler->filter('script, style, nav, footer, header, iframe, noscript')->each(function (Crawler $node) {
             $domNode = $node->getNode(0);
             $domNode->parentNode->removeChild($domNode);
         });
 
-        $text = $crawler->filter('body')->text();
+        $text = $this->crawler->filter('body')->text();
 
         $text = preg_replace('/\s+/', ' ', $text);
         $text = trim($text);
