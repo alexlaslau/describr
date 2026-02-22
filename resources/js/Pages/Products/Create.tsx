@@ -1,6 +1,6 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { PageProps } from '@/types';
-import { Head, Link, router } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import { FormEvent, useState } from 'react';
 
 const STEPS = ['Name', 'Links', 'Review'];
@@ -56,6 +56,8 @@ function isValidUrl(urlString: string): boolean {
 }
 
 export default function Create({ }: PageProps) {
+    const { config } = usePage<PageProps>().props;
+    const maxLinks = config.maxLinksPerProduct;
     const [step, setStep] = useState(0);
     const [name, setName] = useState('');
     const [links, setLinks] = useState<string[]>(['']);
@@ -90,6 +92,7 @@ export default function Create({ }: PageProps) {
     }
 
     function addLink() {
+        if (links.length >= maxLinks) return;
         setLinks([...links, '']);
         setLinkErrors([...linkErrors, '']);
     }
@@ -250,16 +253,20 @@ export default function Create({ }: PageProps) {
                                     ))}
                                 </div>
 
-                                <button
-                                    type="button"
-                                    onClick={addLink}
-                                    className="inline-flex items-center gap-2 rounded-lg border border-dashed border-gray-300 px-4 py-2.5 text-sm font-medium text-indigo-600 transition-all hover:border-indigo-300 hover:bg-indigo-50/50 hover:text-indigo-700"
-                                >
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
-                                    </svg>
-                                    Add another link
-                                </button>
+                                <div className="flex items-center gap-3">
+                                    <button
+                                        type="button"
+                                        onClick={addLink}
+                                        disabled={links.length >= maxLinks}
+                                        className="inline-flex items-center gap-2 rounded-lg border border-dashed border-gray-300 px-4 py-2.5 text-sm font-medium text-indigo-600 transition-all hover:border-indigo-300 hover:bg-indigo-50/50 hover:text-indigo-700 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-gray-300 disabled:hover:bg-transparent disabled:hover:text-indigo-600"
+                                    >
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
+                                        </svg>
+                                        Add another link
+                                    </button>
+                                    <span className="text-xs text-gray-400">{links.length}/{maxLinks}</span>
+                                </div>
 
                                 <div className="flex justify-between pt-2">
                                     <button
@@ -326,8 +333,8 @@ export default function Create({ }: PageProps) {
                                                 <label
                                                     key={option.value}
                                                     className={`flex flex-1 cursor-pointer items-center gap-3 rounded-xl border-2 px-5 py-4 transition-all ${aiProvider === option.value
-                                                            ? 'border-indigo-500 bg-indigo-50/50 shadow-sm shadow-indigo-500/10'
-                                                            : 'border-gray-200 bg-gray-50/30 hover:border-gray-300 hover:bg-gray-50'
+                                                        ? 'border-indigo-500 bg-indigo-50/50 shadow-sm shadow-indigo-500/10'
+                                                        : 'border-gray-200 bg-gray-50/30 hover:border-gray-300 hover:bg-gray-50'
                                                         }`}
                                                 >
                                                     <input

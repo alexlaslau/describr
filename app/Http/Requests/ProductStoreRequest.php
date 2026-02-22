@@ -15,7 +15,7 @@ class ProductStoreRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'links' => 'required|array|min:1',
+            'links' => 'required|array|min:1|max:' . config('services.describr.max_links_per_product'),
             'links.*' => 'required|url|max:1024',
             'ai_provider' => 'required|string|in:openai,anthropic',
         ];

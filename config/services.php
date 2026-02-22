@@ -16,6 +16,7 @@ return [
 
     'describr' => [
         'max_characters_per_source' => 5000,
+        'max_links_per_product' => 8,
     ],
 
     'openai' => [

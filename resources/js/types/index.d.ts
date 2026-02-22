@@ -45,4 +45,7 @@ export type PageProps<
     auth: {
         user: User;
     };
+    config: {
+        maxLinksPerProduct: number;
+    };
 };
