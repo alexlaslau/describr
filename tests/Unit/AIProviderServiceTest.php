@@ -1,6 +1,7 @@
 <?php
 
 use App\Services\AIProviderService;
+use App\Services\AIProviders\AIProviderFactory;
 use App\Interfaces\AIProviderInterface;
 use App\Models\Product;
 use App\Models\GeneratedDescription;
@@ -10,7 +11,11 @@ uses(Tests\TestCase::class);
 
 beforeEach(function () {
     $this->mockModel = Mockery::mock(AIProviderInterface::class);
-    $this->service = new AIProviderService($this->mockModel);
+
+    $mockFactory = Mockery::mock(AIProviderFactory::class);
+    $mockFactory->shouldReceive('make')->andReturn($this->mockModel);
+
+    $this->service = new AIProviderService($mockFactory);
 });
 
 describe('AIProviderService', function () {
@@ -132,6 +137,73 @@ describe('AIProviderService', function () {
             $result = $this->service->generate($product);
 
             expect($result)->toBeInstanceOf(GeneratedDescription::class);
+        });
+
+        it('returns a GeneratedDescription with the correct title and description', function () {
+            $description = new GeneratedDescription();
+            $description->title = 'Gadget';
+            $description->description = 'An amazing gadget';
+
+            $product = Mockery::mock(Product::class)->makePartial();
+            $product->name = 'Gadget';
+            $product->id = 7;
+            $product->shouldReceive('getFullParsedText')->andReturn('Gadget info');
+            $product->shouldReceive('update')->andReturn(true);
+            $product->shouldReceive('generatedDescriptions->create')->andReturn($description);
+
+            $this->mockModel->shouldReceive('generate')->andReturn('An amazing gadget');
+
+            $result = $this->service->generate($product);
+
+            expect($result->title)->toBe('Gadget');
+            expect($result->description)->toBe('An amazing gadget');
+        });
+    });
+
+    describe('provider resolution', function () {
+
+        it('forwards the provider string to the factory', function () {
+            $mockModel = Mockery::mock(AIProviderInterface::class);
+            $mockModel->shouldReceive('generate')->andReturn('Result');
+
+            $mockFactory = Mockery::mock(AIProviderFactory::class);
+            $mockFactory->shouldReceive('make')
+                ->once()
+                ->with('anthropic')
+                ->andReturn($mockModel);
+
+            $service = new AIProviderService($mockFactory);
+
+            $product = Mockery::mock(Product::class)->makePartial();
+            $product->name = 'Test';
+            $product->id = 8;
+            $product->shouldReceive('getFullParsedText')->andReturn('Content');
+            $product->shouldReceive('update')->andReturn(true);
+            $product->shouldReceive('generatedDescriptions->create')->andReturn(new GeneratedDescription());
+
+            $service->generate($product, 'anthropic');
+        });
+
+        it('defaults to openai when no provider is specified', function () {
+            $mockModel = Mockery::mock(AIProviderInterface::class);
+            $mockModel->shouldReceive('generate')->andReturn('Result');
+
+            $mockFactory = Mockery::mock(AIProviderFactory::class);
+            $mockFactory->shouldReceive('make')
+                ->once()
+                ->with('openai')
+                ->andReturn($mockModel);
+
+            $service = new AIProviderService($mockFactory);
+
+            $product = Mockery::mock(Product::class)->makePartial();
+            $product->name = 'Test';
+            $product->id = 9;
+            $product->shouldReceive('getFullParsedText')->andReturn('Content');
+            $product->shouldReceive('update')->andReturn(true);
+            $product->shouldReceive('generatedDescriptions->create')->andReturn(new GeneratedDescription());
+
+            $service->generate($product);
         });
     });
 });
