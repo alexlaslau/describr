@@ -35,7 +35,7 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user(),
             ],
             'config' => [
-                'maxLinksPerProduct' => config('services.describr.max_links_per_product'),
+                'maxLinksPerProduct' => config('app.describr.max_links_per_product'),
             ],
         ];
     }

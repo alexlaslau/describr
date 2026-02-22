@@ -74,7 +74,7 @@ class Product extends Model
 
     public function getFullParsedText(): string
     {
-        $maxCharsPerSource = config('services.describr.max_characters_per_source');
+        $maxCharsPerSource = config('app.describr.max_characters_per_source');
 
         return $this->productLinks()
             ->where('status', 'scraped')
