@@ -13,7 +13,7 @@ class ProductLinkFactory extends Factory
             'product_id' => Product::factory(),
             'url' => fake()->url(),
             'status' => 'pending',
-            'raw_html' => null,
+            'parsed_content' => null,
             'error_message' => null,
             'scraped_at' => null,
         ];
@@ -23,7 +23,7 @@ class ProductLinkFactory extends Factory
     {
         return $this->state(fn () => [
             'status' => 'scraped',
-            'raw_html' => '<html><body>' . fake()->paragraphs(3, true) . '</body></html>',
+            'parsed_content' => fake()->paragraphs(3, true),
             'scraped_at' => now(),
         ]);
     }
