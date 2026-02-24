@@ -1,0 +1,24 @@
+name: CD — Deploy to Easypanel
+
+on:
+  workflow_run:
+    workflows: ['CI — Tests']
+    types: [completed]
+    branches: [main]
+
+jobs:
+  deploy:
+    name: Trigger Easypanel Deploy
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
+    steps:
+      - name: Trigger Easypanel webhook
+        run: |
+          response=$(curl -s -o /dev/null -w "%{http_code}" -X POST "${{ secrets.EASYPANEL_WEBHOOK_URL }}")
+          echo "Easypanel responded with HTTP $response"
+          if [ "$response" -lt 200 ] || [ "$response" -ge 300 ]; then
+            echo "::error::Easypanel deploy webhook failed with HTTP $response"
+            exit 1
+          fi
+          echo "✅ Deploy triggered successfully"
