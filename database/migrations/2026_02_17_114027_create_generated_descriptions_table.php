@@ -13,6 +13,7 @@ return new class extends Migration
             $table->foreignId('product_id')->constrained()->cascadeOnDelete();
             $table->string('title')->nullable();
             $table->longText('description')->nullable();
+            $table->json('prompt_settings')->nullable();
             $table->timestamps();
 
             $table->index('product_id');

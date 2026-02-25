@@ -14,6 +14,11 @@ class GeneratedDescription extends Model
     protected $fillable = [
         'title',
         'description',
+        'prompt_settings',
+    ];
+
+    protected $casts = [
+        'prompt_settings' => 'array',
     ];
 
     public function product(): BelongsTo

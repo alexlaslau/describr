@@ -15,7 +15,6 @@ class AnthropicProvider implements AIProviderInterface
 
     public function generate(string $prompt): string
     {
-        \Log::info($prompt);
         $response = Http::timeout($this->timeout)
             ->retry(3, 200)
             ->withHeaders([

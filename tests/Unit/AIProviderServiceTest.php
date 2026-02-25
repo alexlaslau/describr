@@ -77,6 +77,34 @@ describe('AIProviderService', function () {
                 'tone' => 'Entuziast si energic',
             ]));
         });
+
+        it('saves prompt_settings when creating a description', function () {
+            $product = Mockery::mock(Product::class)->makePartial();
+            $product->name = 'Saved Settings';
+            $product->id = 11;
+            $product->shouldReceive('getFullParsedText')->andReturn('Some content');
+            $product->shouldReceive('update')->andReturn(true);
+
+            $product->shouldReceive('generatedDescriptions->create')
+                ->once()
+                ->withArgs(function (array $data) {
+                    return isset($data['prompt_settings'])
+                        && $data['prompt_settings']['ai_provider'] === 'anthropic'
+                        && $data['prompt_settings']['target_audience'] === 'Parinti cu copii mici'
+                        && $data['prompt_settings']['tone'] === 'Calm si de incredere'
+                        && $data['prompt_settings']['custom_details'] === 'Livrare gratuita';
+                })
+                ->andReturn(new GeneratedDescription());
+
+            $this->mockModel->shouldReceive('generate')->andReturn('A description');
+
+            $this->service->generate(makeScrapingData($product, [
+                'aiProvider' => 'anthropic',
+                'targetAudience' => 'Parinti cu copii mici',
+                'tone' => 'Calm si de incredere',
+                'customDetails' => 'Livrare gratuita',
+            ]));
+        });
     });
 
     describe('empty content handling', function () {

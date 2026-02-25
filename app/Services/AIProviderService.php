@@ -39,6 +39,7 @@ class AIProviderService
             $description = $product->generatedDescriptions()->create([
                 'title' => $product->name,
                 'description' => $response,
+                'prompt_settings' => $scrapingData->toArray(),
             ]);
 
             $product->update([

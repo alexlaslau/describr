@@ -24,4 +24,14 @@ class ProductScrapingData
             customDetails: $data['custom_details'] ?? '',
         );
     }
+
+    public function toArray(): array
+    {
+        return [
+            'ai_provider' => $this->aiProvider,
+            'target_audience' => $this->targetAudience,
+            'tone' => $this->tone,
+            'custom_details' => $this->customDetails,
+        ];
+    }
 }
