@@ -40,6 +40,24 @@ describe('AIProviderService', function () {
 
             $this->service->generate($product);
         });
+
+        it('injects the correct prompt length instruction into the prompt', function () {
+            $product = Mockery::mock(Product::class)->makePartial();
+            $product->name = 'Length Test';
+            $product->id = 10;
+            $product->shouldReceive('getFullParsedText')->andReturn('Some content');
+            $product->shouldReceive('update')->andReturn(true);
+            $product->shouldReceive('generatedDescriptions->create')->andReturn(new GeneratedDescription());
+
+            $this->mockModel->shouldReceive('generate')
+                ->once()
+                ->withArgs(function (string $prompt) {
+                    return str_contains($prompt, 'short — keep each section brief, 2-3 sentences max');
+                })
+                ->andReturn('Short description');
+
+            $this->service->generate($product, 'openai', 'short');
+        });
     });
 
     describe('empty content handling', function () {

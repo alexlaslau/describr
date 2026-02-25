@@ -62,6 +62,7 @@ export default function Create({ }: PageProps) {
     const [name, setName] = useState('');
     const [links, setLinks] = useState<string[]>(['']);
     const [aiProvider, setAiProvider] = useState<'openai' | 'anthropic'>('openai');
+    const [promptLength, setPromptLength] = useState<'short' | 'medium' | 'long'>('medium');
     const [nameError, setNameError] = useState('');
     const [linkErrors, setLinkErrors] = useState<string[]>(['']);
     const [submitting, setSubmitting] = useState(false);
@@ -122,6 +123,7 @@ export default function Create({ }: PageProps) {
             name: name.trim(),
             links: links.map((l) => l.trim()),
             ai_provider: aiProvider,
+            prompt_length: promptLength,
         }, {
             onFinish: () => setSubmitting(false),
         });
@@ -347,6 +349,43 @@ export default function Create({ }: PageProps) {
                                                     />
                                                     <div>
                                                         <p className={`text-sm font-semibold ${aiProvider === option.value ? 'text-indigo-900' : 'text-gray-700'
+                                                            }`}>
+                                                            {option.label}
+                                                        </p>
+                                                        <p className="text-xs text-gray-500">{option.desc}</p>
+                                                    </div>
+                                                </label>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    <div className="mt-8">
+                                        <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">
+                                            Response Length
+                                        </p>
+                                        <div className="mt-3 flex gap-3">
+                                            {[
+                                                { value: 'short' as const, label: 'Short', desc: 'Brief and concise output' },
+                                                { value: 'medium' as const, label: 'Medium', desc: 'Balanced length' },
+                                                { value: 'long' as const, label: 'Long', desc: 'Detailed and comprehensive' },
+                                            ].map((option) => (
+                                                <label
+                                                    key={option.value}
+                                                    className={`flex flex-1 cursor-pointer items-center gap-3 rounded-xl border-2 px-5 py-4 transition-all ${promptLength === option.value
+                                                        ? 'border-indigo-500 bg-indigo-50/50 shadow-sm shadow-indigo-500/10'
+                                                        : 'border-gray-200 bg-gray-50/30 hover:border-gray-300 hover:bg-gray-50'
+                                                        }`}
+                                                >
+                                                    <input
+                                                        type="radio"
+                                                        name="prompt_length"
+                                                        value={option.value}
+                                                        checked={promptLength === option.value}
+                                                        onChange={() => setPromptLength(option.value)}
+                                                        className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                                    />
+                                                    <div>
+                                                        <p className={`text-sm font-semibold ${promptLength === option.value ? 'text-indigo-900' : 'text-gray-700'
                                                             }`}>
                                                             {option.label}
                                                         </p>

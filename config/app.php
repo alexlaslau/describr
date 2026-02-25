@@ -132,6 +132,11 @@ return [
     'describr' => [
         'max_characters_per_source' => 5000,
         'max_links_per_product' => 8,
+        'prompt_length_map' => [
+            'short' => 'short — keep each section brief, 2-3 sentences max',
+            'medium' => 'medium — balanced, 4-6 sentences per section',
+            'long' => 'long — detailed and comprehensive, 7+ sentences per section',
+        ],
     ],
 
 ];

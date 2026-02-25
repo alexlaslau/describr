@@ -17,14 +17,14 @@ class AIProviderService
         private AIProviderFactory $factory,
     ) {}
 
-    public function generate(Product $product, string $provider = 'openai'): GeneratedDescription
+    public function generate(Product $product, string $provider = 'openai', string $promptLength = 'medium'): GeneratedDescription
     {
         $product->update(['status' => 'generating']);
 
         $this->aiProvider = $this->resolveProvider($provider);
 
         try {
-            $response = $this->getProductDescription($product);
+            $response = $this->getProductDescription($product, $promptLength);
 
             $description = $product->generatedDescriptions()->create([
                 'title' => $product->name,
@@ -51,7 +51,7 @@ class AIProviderService
         return $this->factory->make($provider);
     }
 
-    private function getProductDescription(Product $product): string
+    private function getProductDescription(Product $product, string $promptLength): string
     {
         $scrapedContent = $product->getFullParsedText();
 
@@ -59,18 +59,19 @@ class AIProviderService
             throw new EmptyScrapedContentException();
         }
 
-        $prompt = $this->buildPrompt($product->name, $scrapedContent);
+        $prompt = $this->buildPrompt($product->name, $scrapedContent, $promptLength);
 
         return $this->aiProvider->generate($prompt);
     }
 
-    private function buildPrompt(string $productName, string $scrapedContent): string
+    private function buildPrompt(string $productName, string $scrapedContent, string $promptLength): string
     {
         $template = file_get_contents(resource_path('prompts/product-description.txt'));
+        $promptSettings = config('app.describr.prompt_length_map')[$promptLength];
 
         return str_replace(
-            ['{productName}', '{scrapedContent}'],
-            [$productName, $scrapedContent],
+            ['{productName}', '{scrapedContent}', '{promptLength}'],
+            [$productName, $scrapedContent, $promptSettings],
             $template,
         );
     }

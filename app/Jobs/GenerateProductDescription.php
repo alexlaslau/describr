@@ -18,11 +18,12 @@ class GenerateProductDescription implements ShouldQueue
     public function __construct(
         private Product $product,
         private string $provider = 'openai',
+        private string $promptLength = 'medium',
     ) {}
 
     public function handle(AIProviderService $aiProviderService): void
     {
-        $aiProviderService->generate($this->product, $this->provider);
+        $aiProviderService->generate($this->product, $this->provider, $this->promptLength);
     }
 
     public function failed(\Throwable $e): void

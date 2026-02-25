@@ -20,12 +20,14 @@ class ScrapeProduct implements ShouldQueue
     public function __construct(
         public Product $product,
         public string $provider = 'openai',
+        public string $promptLength = 'medium',
     ) {}
 
     public function handle(): void
     {
         $product = $this->product;
         $provider = $this->provider;
+        $promptLength = $this->promptLength;
 
         $product->update(['status' => 'scraping']);
 
@@ -34,9 +36,9 @@ class ScrapeProduct implements ShouldQueue
             ->toArray();
 
         Bus::batch($jobs)
-            ->then(function (Batch $batch) use ($product, $provider) {
+            ->then(function (Batch $batch) use ($product, $provider, $promptLength) {
                 $product->update(['status' => 'scraped']);
-                GenerateProductDescription::dispatch($product, $provider);
+                GenerateProductDescription::dispatch($product, $provider, $promptLength);
             })
             ->catch(function (Batch $batch, \Throwable $e) use ($product) {
                 $product->update(['status' => 'failed']);
