@@ -2,6 +2,7 @@
 
 use App\Services\AIProviderService;
 use App\Services\AIProviders\AIProviderFactory;
+use App\DTOs\ProductScrapingData;
 use App\Interfaces\AIProviderInterface;
 use App\Models\Product;
 use App\Models\GeneratedDescription;
@@ -18,16 +19,34 @@ beforeEach(function () {
     $this->service = new AIProviderService($mockFactory);
 });
 
+function makeProduct(string $name, int $id, string $scrapedText): Product
+{
+    $product = Mockery::mock(Product::class)->makePartial();
+    $product->name = $name;
+    $product->id = $id;
+    $product->shouldReceive('getFullParsedText')->andReturn($scrapedText);
+    $product->shouldReceive('update')->andReturn(true);
+
+    return $product;
+}
+
+function makeScrapingData(Product $product, array $overrides = []): ProductScrapingData
+{
+    return new ProductScrapingData(
+        product: $product,
+        aiProvider: $overrides['aiProvider'] ?? 'openai',
+        targetAudience: $overrides['targetAudience'] ?? 'General — adulti 25-55 ani',
+        tone: $overrides['tone'] ?? 'Prietenos si cald',
+        customDetails: $overrides['customDetails'] ?? '',
+    );
+}
+
 describe('AIProviderService', function () {
 
     describe('prompt building', function () {
 
         it('builds prompt with product name and scraped content from template', function () {
-            $product = Mockery::mock(Product::class)->makePartial();
-            $product->name = 'Super Widget';
-            $product->id = 1;
-            $product->shouldReceive('getFullParsedText')->andReturn('Scraped data about the widget');
-            $product->shouldReceive('update')->andReturn(true);
+            $product = makeProduct('Super Widget', 1, 'Scraped data about the widget');
             $product->shouldReceive('generatedDescriptions->create')->andReturn(new GeneratedDescription());
 
             $this->mockModel->shouldReceive('generate')
@@ -38,48 +57,38 @@ describe('AIProviderService', function () {
                 })
                 ->andReturn('Generated description text');
 
-            $this->service->generate($product);
+            $this->service->generate(makeScrapingData($product));
         });
 
-        it('injects the correct prompt length instruction into the prompt', function () {
-            $product = Mockery::mock(Product::class)->makePartial();
-            $product->name = 'Length Test';
-            $product->id = 10;
-            $product->shouldReceive('getFullParsedText')->andReturn('Some content');
-            $product->shouldReceive('update')->andReturn(true);
+        it('injects target audience and tone into the prompt', function () {
+            $product = makeProduct('Settings Test', 10, 'Some content');
             $product->shouldReceive('generatedDescriptions->create')->andReturn(new GeneratedDescription());
 
             $this->mockModel->shouldReceive('generate')
                 ->once()
                 ->withArgs(function (string $prompt) {
-                    return str_contains($prompt, 'short — keep each section brief, 2-3 sentences max');
+                    return str_contains($prompt, 'Tineri 18-30 ani, activi')
+                        && str_contains($prompt, 'Entuziast si energic');
                 })
                 ->andReturn('Short description');
 
-            $this->service->generate($product, 'openai', 'short');
+            $this->service->generate(makeScrapingData($product, [
+                'targetAudience' => 'Tineri 18-30 ani, activi',
+                'tone' => 'Entuziast si energic',
+            ]));
         });
     });
 
     describe('empty content handling', function () {
 
         it('throws EmptyScrapedContentException when scraped content is empty', function () {
-            $product = Mockery::mock(Product::class)->makePartial();
-            $product->name = 'Empty Product';
-            $product->id = 2;
-            $product->shouldReceive('getFullParsedText')->andReturn('');
-            $product->shouldReceive('update')->andReturn(true);
-
-            $this->service->generate($product);
+            $product = makeProduct('Empty Product', 2, '');
+            $this->service->generate(makeScrapingData($product));
         })->throws(EmptyScrapedContentException::class);
 
         it('throws EmptyScrapedContentException when scraped content is only whitespace', function () {
-            $product = Mockery::mock(Product::class)->makePartial();
-            $product->name = 'Whitespace Product';
-            $product->id = 3;
-            $product->shouldReceive('getFullParsedText')->andReturn('   ');
-            $product->shouldReceive('update')->andReturn(true);
-
-            $this->service->generate($product);
+            $product = makeProduct('Whitespace Product', 3, '   ');
+            $this->service->generate(makeScrapingData($product));
         })->throws(EmptyScrapedContentException::class);
     });
 
@@ -104,7 +113,7 @@ describe('AIProviderService', function () {
 
             $this->mockModel->shouldReceive('generate')->andReturn('A description');
 
-            $this->service->generate($product);
+            $this->service->generate(makeScrapingData($product));
 
             expect($statusUpdates)->toBe(['generating', 'completed']);
         });
@@ -127,7 +136,7 @@ describe('AIProviderService', function () {
             $this->mockModel->shouldReceive('generate')->andThrow(new \RuntimeException('API error'));
 
             try {
-                $this->service->generate($product);
+                $this->service->generate(makeScrapingData($product));
             } catch (\RuntimeException) {
                 // expected
             }
@@ -143,16 +152,12 @@ describe('AIProviderService', function () {
             $description->title = 'Widget';
             $description->description = 'A nice widget';
 
-            $product = Mockery::mock(Product::class)->makePartial();
-            $product->name = 'Widget';
-            $product->id = 6;
-            $product->shouldReceive('getFullParsedText')->andReturn('Content');
-            $product->shouldReceive('update')->andReturn(true);
+            $product = makeProduct('Widget', 6, 'Content');
             $product->shouldReceive('generatedDescriptions->create')->andReturn($description);
 
             $this->mockModel->shouldReceive('generate')->andReturn('A nice widget');
 
-            $result = $this->service->generate($product);
+            $result = $this->service->generate(makeScrapingData($product));
 
             expect($result)->toBeInstanceOf(GeneratedDescription::class);
         });
@@ -162,16 +167,12 @@ describe('AIProviderService', function () {
             $description->title = 'Gadget';
             $description->description = 'An amazing gadget';
 
-            $product = Mockery::mock(Product::class)->makePartial();
-            $product->name = 'Gadget';
-            $product->id = 7;
-            $product->shouldReceive('getFullParsedText')->andReturn('Gadget info');
-            $product->shouldReceive('update')->andReturn(true);
+            $product = makeProduct('Gadget', 7, 'Gadget info');
             $product->shouldReceive('generatedDescriptions->create')->andReturn($description);
 
             $this->mockModel->shouldReceive('generate')->andReturn('An amazing gadget');
 
-            $result = $this->service->generate($product);
+            $result = $this->service->generate(makeScrapingData($product));
 
             expect($result->title)->toBe('Gadget');
             expect($result->description)->toBe('An amazing gadget');
@@ -192,14 +193,10 @@ describe('AIProviderService', function () {
 
             $service = new AIProviderService($mockFactory);
 
-            $product = Mockery::mock(Product::class)->makePartial();
-            $product->name = 'Test';
-            $product->id = 8;
-            $product->shouldReceive('getFullParsedText')->andReturn('Content');
-            $product->shouldReceive('update')->andReturn(true);
+            $product = makeProduct('Test', 8, 'Content');
             $product->shouldReceive('generatedDescriptions->create')->andReturn(new GeneratedDescription());
 
-            $service->generate($product, 'anthropic');
+            $service->generate(makeScrapingData($product, ['aiProvider' => 'anthropic']));
         });
 
         it('defaults to openai when no provider is specified', function () {
@@ -214,14 +211,10 @@ describe('AIProviderService', function () {
 
             $service = new AIProviderService($mockFactory);
 
-            $product = Mockery::mock(Product::class)->makePartial();
-            $product->name = 'Test';
-            $product->id = 9;
-            $product->shouldReceive('getFullParsedText')->andReturn('Content');
-            $product->shouldReceive('update')->andReturn(true);
+            $product = makeProduct('Test', 9, 'Content');
             $product->shouldReceive('generatedDescriptions->create')->andReturn(new GeneratedDescription());
 
-            $service->generate($product);
+            $service->generate(makeScrapingData($product));
         });
     });
 });

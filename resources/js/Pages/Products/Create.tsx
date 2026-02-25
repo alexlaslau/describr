@@ -62,7 +62,11 @@ export default function Create({ }: PageProps) {
     const [name, setName] = useState('');
     const [links, setLinks] = useState<string[]>(['']);
     const [aiProvider, setAiProvider] = useState<'openai' | 'anthropic'>('openai');
-    const [promptLength, setPromptLength] = useState<'short' | 'medium' | 'long'>('medium');
+    const [targetAudience, setTargetAudience] = useState(config.targetAudiences[5] ?? '');
+    const [customTargetAudience, setCustomTargetAudience] = useState('');
+    const [tone, setTone] = useState(config.tones[0] ?? '');
+    const [customTone, setCustomTone] = useState('');
+    const [customDetails, setCustomDetails] = useState('');
     const [nameError, setNameError] = useState('');
     const [linkErrors, setLinkErrors] = useState<string[]>(['']);
     const [submitting, setSubmitting] = useState(false);
@@ -123,7 +127,9 @@ export default function Create({ }: PageProps) {
             name: name.trim(),
             links: links.map((l) => l.trim()),
             ai_provider: aiProvider,
-            prompt_length: promptLength,
+            target_audience: targetAudience === 'custom' ? customTargetAudience : targetAudience,
+            tone: tone === 'custom' ? customTone : tone,
+            custom_details: customDetails,
         }, {
             onFinish: () => setSubmitting(false),
         });
@@ -361,39 +367,76 @@ export default function Create({ }: PageProps) {
 
                                     <div className="mt-8">
                                         <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">
-                                            Response Length
+                                            Target Audience
                                         </p>
-                                        <div className="mt-3 flex gap-3">
-                                            {[
-                                                { value: 'short' as const, label: 'Short', desc: 'Brief and concise output' },
-                                                { value: 'medium' as const, label: 'Medium', desc: 'Balanced length' },
-                                                { value: 'long' as const, label: 'Long', desc: 'Detailed and comprehensive' },
-                                            ].map((option) => (
-                                                <label
-                                                    key={option.value}
-                                                    className={`flex flex-1 cursor-pointer items-center gap-3 rounded-xl border-2 px-5 py-4 transition-all ${promptLength === option.value
-                                                        ? 'border-indigo-500 bg-indigo-50/50 shadow-sm shadow-indigo-500/10'
-                                                        : 'border-gray-200 bg-gray-50/30 hover:border-gray-300 hover:bg-gray-50'
-                                                        }`}
-                                                >
-                                                    <input
-                                                        type="radio"
-                                                        name="prompt_length"
-                                                        value={option.value}
-                                                        checked={promptLength === option.value}
-                                                        onChange={() => setPromptLength(option.value)}
-                                                        className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                                                    />
-                                                    <div>
-                                                        <p className={`text-sm font-semibold ${promptLength === option.value ? 'text-indigo-900' : 'text-gray-700'
-                                                            }`}>
-                                                            {option.label}
-                                                        </p>
-                                                        <p className="text-xs text-gray-500">{option.desc}</p>
-                                                    </div>
-                                                </label>
+                                        <select
+                                            value={targetAudience}
+                                            onChange={(e) => setTargetAudience(e.target.value)}
+                                            className="mt-3 block w-full cursor-pointer rounded-xl border-2 border-gray-200 bg-gray-50/50 px-5 py-3.5 text-base text-gray-900 focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all appearance-none"
+                                            style={{ backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`, backgroundPosition: 'right 1rem center', backgroundRepeat: 'no-repeat', backgroundSize: '1.25rem', paddingRight: '3rem' }}
+                                        >
+                                            {config.targetAudiences.map((option) => (
+                                                <option key={option} value={option}>{option}</option>
                                             ))}
-                                        </div>
+                                            <option value="custom">✏️ Custom...</option>
+                                        </select>
+                                        {targetAudience === 'custom' && (
+                                            <input
+                                                type="text"
+                                                value={customTargetAudience}
+                                                onChange={(e) => setCustomTargetAudience(e.target.value)}
+                                                placeholder="Describe your target audience..."
+                                                maxLength={255}
+                                                className="mt-3 block w-full rounded-xl border-2 border-gray-200 bg-gray-50/50 px-5 py-3.5 text-base text-gray-900 placeholder:text-gray-400 focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all"
+                                                autoFocus
+                                            />
+                                        )}
+                                    </div>
+
+                                    <div className="mt-8">
+                                        <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">
+                                            Tone
+                                        </p>
+                                        <select
+                                            value={tone}
+                                            onChange={(e) => setTone(e.target.value)}
+                                            className="mt-3 block w-full cursor-pointer rounded-xl border-2 border-gray-200 bg-gray-50/50 px-5 py-3.5 text-base text-gray-900 focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all appearance-none"
+                                            style={{ backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`, backgroundPosition: 'right 1rem center', backgroundRepeat: 'no-repeat', backgroundSize: '1.25rem', paddingRight: '3rem' }}
+                                        >
+                                            {config.tones.map((option) => (
+                                                <option key={option} value={option}>{option}</option>
+                                            ))}
+                                            <option value="custom">✏️ Custom...</option>
+                                        </select>
+                                        {tone === 'custom' && (
+                                            <input
+                                                type="text"
+                                                value={customTone}
+                                                onChange={(e) => setCustomTone(e.target.value)}
+                                                placeholder="Describe the tone you want..."
+                                                maxLength={255}
+                                                className="mt-3 block w-full rounded-xl border-2 border-gray-200 bg-gray-50/50 px-5 py-3.5 text-base text-gray-900 placeholder:text-gray-400 focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all"
+                                                autoFocus
+                                            />
+                                        )}
+                                    </div>
+
+                                    <div className="mt-8">
+                                        <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">
+                                            Custom Details
+                                        </p>
+                                        <p className="mt-1 text-sm text-gray-500">
+                                            Optional extra info about the product (e.g. "vine cu baterii incluse", "1+1 gratis").
+                                        </p>
+                                        <textarea
+                                            value={customDetails}
+                                            onChange={(e) => setCustomDetails(e.target.value)}
+                                            placeholder="Add any extra product details..."
+                                            maxLength={300}
+                                            rows={3}
+                                            className="mt-3 block w-full rounded-xl border-2 border-gray-200 bg-gray-50/50 px-5 py-3.5 text-base text-gray-900 placeholder:text-gray-400 focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all resize-none"
+                                        />
+                                        <p className="mt-1.5 text-right text-xs text-gray-400">{customDetails.length}/300</p>
                                     </div>
                                 </div>
                             </div>

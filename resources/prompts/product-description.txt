@@ -10,13 +10,13 @@ drives purchases.
 
 
 ================================================================================
-  VARIABLES
+  INPUT DATA
 ================================================================================
 
-- Product Name:    {productName}
-- Target Audience: {targetAudience}
-- Tone:            {tone}
-- Custom Details:  {customDetails}
+   PRODUCT NAME:     [{productName}]
+   TARGET AUDIENCE:  [{targetAudience}]
+   TONE:             [{tone}]
+   CUSTOM DETAILS:   [{customDetails}]
 
 
 ================================================================================
@@ -25,24 +25,33 @@ drives purchases.
 
 1. Write everything in Romanian.
 
-2. Sound human, conversational, and {tone} — never corporate or robotic.
+2. Sound human, conversational, and matching the TONE specified above 
+   — never corporate or robotic.
 
-3. Only use information found in the scraped data below and the custom 
-   details provided — do not invent product features, materials, or 
-   specifications.
+3. Only use information found in the SCRAPED DATA section at the bottom 
+   and the CUSTOM DETAILS field above — do not invent product features, 
+   materials, or specifications.
 
-4. If {customDetails} is empty, ignore it and rely solely on the scraped data.
+4. If the CUSTOM DETAILS field above is empty, ignore it and rely solely 
+   on the scraped data.
 
-5. If {customDetails} contains information, treat it as equally trustworthy 
-   to the scraped data. Weave custom details naturally into the copy where 
-   relevant — do not force every detail into every section.
+5. If the CUSTOM DETAILS field contains information, treat it as equally 
+   trustworthy to the scraped data. Weave those details naturally into the 
+   copy where relevant — do not force every detail into every section.
 
 6. Do not add emojis, special symbols, or any formatting other than plain 
    text and the ### section headers specified below.
 
-7. Write NOTHING ELSE other than what is asked — no confirmations, no 
-   greetings, no commentary.
+7. Add ### at the beginning of each part. Like so.
+   ### Part 1: For the client
+   ### Part 2: For the product
+   ### Part 3: For the reviews
 
+8. Add bulletpoints in the front of every other sub-heading of each part
+   (Hooks, Solution, Benefit, Future Pacing, CTA, Helpful informations, Reviews)
+
+9. Write NOTHING ELSE other than what is asked — no confirmations, no 
+   greetings, no commentary.
 
 ================================================================================
   STEP 0: INTERNAL EXTRACTION (do NOT include this in your output)
@@ -56,42 +65,46 @@ the custom details, then extract:
    - What makes it unique compared to alternatives
    - What is included in the package
    - Any materials, dimensions, durability claims, or usage instructions
-   - Any additional context from {customDetails}
+   - Any additional context from the CUSTOM DETAILS field
 
 Ground ALL your copy in this extracted information. If a detail is not in 
 the scraped data or custom details, do not use it.
+
+Each section should feel like a full paragraph, not a single line. 
+Expand on ideas, give examples, paint scenarios. Do not rush 
+through sections — the reader needs to feel the emotion and 
+understand the product fully before moving to the next section.
 
 
 ================================================================================
   PART 1: FOR THE CLIENT
 ================================================================================
 
-Write a persuasive, emotionally driven sales text aimed at {targetAudience}. 
-Follow this exact structure and label each section with its number. 
-Target length: ~150-200 words total.
+Write a persuasive, emotionally driven sales text aimed at the 
+TARGET AUDIENCE specified above. Follow this exact structure and label 
+each section with its number. Target length: ~400-500 words total.
 
-
-   Hook 1:
+   Hook 1: (2-3 sentences minimum)
    (Open with the main pain point or frustration the audience feels. Ask a 
    question or make a bold relatable statement that stops the scroll.)
 
-   Hook 2:
+   Hook 2: (2-3 sentences minimum)
    (Amplify the pain — add a second layer of frustration or a scenario they 
    recognize from daily life.)
 
-   Solution:
-   (Introduce the product by name. Explain clearly what it does and how it 
-   works, in simple language.)
+   Solution: (3-5 sentences minimum — describe the product in detail)
+   (Introduce the product by name using the PRODUCT NAME above. Explain 
+   clearly what it does and how it works, in simple language.)
 
-   Benefit:
+   Benefit: (3-4 sentences minimum — be specific and concrete)
    (Describe the concrete improvement in the client's life after using the 
    product. Be specific.)
 
-   Future pacing:
+   Future pacing: (2-3 sentences minimum)
    (Paint a vivid picture of their life now that the problem is gone. Make 
    them feel the relief.)
 
-   CTA:
+   CTA: (1-2 sentences)
    (Close with a short, direct call to action that creates gentle urgency.)
 
 
@@ -122,14 +135,14 @@ Target length: ~150-200 words total.
 Write 4-6 helpful, factual information points about the product. Focus on 
 practical details the buyer needs to know: how it works, what's included, 
 durability, ease of use, design, size, etc. 
-Target length: ~100-150 words total.
+Target length: ~300-400 words total.
 
 Label each point as "Helpful information {number}:".
 
 Rules for this part:
 
    - Every point must be grounded in the scraped data or custom details.
-   - Keep each point to 1-2 sentences.
+   - Each point should be 2-3 sentences, not just one.
    - Lead with the most impressive or reassuring detail first.
 
 
@@ -207,8 +220,8 @@ VARIETY RULES (to avoid robotic patterns):
   SCRAPED DATA
 ================================================================================
 
-Here is the scraped data from multiple sources about "{productName}". 
-Use ONLY this information combined with {customDetails}:
+Here is the scraped data from multiple sources about the PRODUCT NAME above. 
+Use ONLY this information combined with the CUSTOM DETAILS field:
 
 {scrapedContent}
 

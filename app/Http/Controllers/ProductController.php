@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Http\Requests\ProductStoreRequest;
+use App\DTOs\ProductScrapingData;
 use Illuminate\Support\Facades\Auth;
 use App\Jobs\ScrapeProduct;
 use Inertia\Inertia;
@@ -41,7 +42,9 @@ class ProductController extends Controller
             $request->cleanedLinks(),
         );
 
-        ScrapeProduct::dispatch($product, $request->validated('ai_provider'), $request->validated('prompt_length'));
+        $scrapingData = ProductScrapingData::fromRequest($product, $request->validated());
+
+        ScrapeProduct::dispatch($scrapingData);
 
         return redirect()->route('products.show', $product);
     }

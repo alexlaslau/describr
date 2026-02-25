@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Models\Product;
+use App\DTOs\ProductScrapingData;
 use App\Services\AIProviderService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
@@ -16,18 +16,16 @@ class GenerateProductDescription implements ShouldQueue
     public int $timeout = 180;
 
     public function __construct(
-        private Product $product,
-        private string $provider = 'openai',
-        private string $promptLength = 'medium',
+        private ProductScrapingData $scrapingData,
     ) {}
 
     public function handle(AIProviderService $aiProviderService): void
     {
-        $aiProviderService->generate($this->product, $this->provider, $this->promptLength);
+        $aiProviderService->generate($this->scrapingData);
     }
 
     public function failed(\Throwable $e): void
     {
-        $this->product->update(['status' => 'failed']);
+        $this->scrapingData->product->update(['status' => 'failed']);
     }
 }

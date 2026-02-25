@@ -47,5 +47,7 @@ export type PageProps<
     };
     config: {
         maxLinksPerProduct: number;
+        targetAudiences: string[];
+        tones: string[];
     };
 };

@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Models\Product;
+use App\DTOs\ProductScrapingData;
 use Illuminate\Bus\Batch;
 use Illuminate\Support\Facades\Bus;
 use App\Jobs\GenerateProductDescription;
@@ -18,16 +18,13 @@ class ScrapeProduct implements ShouldQueue
     public int $timeout = 60;
 
     public function __construct(
-        public Product $product,
-        public string $provider = 'openai',
-        public string $promptLength = 'medium',
+        public ProductScrapingData $scrapingData,
     ) {}
 
     public function handle(): void
     {
-        $product = $this->product;
-        $provider = $this->provider;
-        $promptLength = $this->promptLength;
+        $product = $this->scrapingData->product;
+        $scrapingData = $this->scrapingData;
 
         $product->update(['status' => 'scraping']);
 
@@ -36,9 +33,9 @@ class ScrapeProduct implements ShouldQueue
             ->toArray();
 
         Bus::batch($jobs)
-            ->then(function (Batch $batch) use ($product, $provider, $promptLength) {
-                $product->update(['status' => 'scraped']);
-                GenerateProductDescription::dispatch($product, $provider, $promptLength);
+            ->then(function (Batch $batch) use ($scrapingData) {
+                $scrapingData->product->update(['status' => 'scraped']);
+                GenerateProductDescription::dispatch($scrapingData);
             })
             ->catch(function (Batch $batch, \Throwable $e) use ($product) {
                 $product->update(['status' => 'failed']);

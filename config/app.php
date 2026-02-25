@@ -132,10 +132,20 @@ return [
     'describr' => [
         'max_characters_per_source' => 5000,
         'max_links_per_product' => 8,
-        'prompt_length_map' => [
-            'short' => 'short — keep each section brief, 2-3 sentences max',
-            'medium' => 'medium — balanced, 4-6 sentences per section',
-            'long' => 'long — detailed and comprehensive, 7+ sentences per section',
+        'target_audiences' => [
+            'Femei 25-45 ani, mame, gospodine',
+            'Barbati 30-50 ani, practici',
+            'Tineri 18-30 ani, activi',
+            'Parinti cu copii mici',
+            'Persoane 40-60 ani, cu probleme de sanatate',
+            'General — adulti 25-55 ani',
+        ],
+        'tones' => [
+            'Prietenos si cald',
+            'Entuziast si energic',
+            'Calm si de incredere',
+            'Urgent si direct',
+            'Jucaus si amuzant',
         ],
     ],
 

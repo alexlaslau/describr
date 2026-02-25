@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\Models\Product;
 use App\Models\GeneratedDescription;
+use App\DTOs\ProductScrapingData;
 use App\Interfaces\AIProviderInterface;
 use App\Exceptions\EmptyScrapedContentException;
 use App\Services\AIProviders\AIProviderFactory;
@@ -17,14 +17,24 @@ class AIProviderService
         private AIProviderFactory $factory,
     ) {}
 
-    public function generate(Product $product, string $provider = 'openai', string $promptLength = 'medium'): GeneratedDescription
+    public function generate(ProductScrapingData $scrapingData): GeneratedDescription
     {
+        $product = $scrapingData->product;
+
         $product->update(['status' => 'generating']);
 
-        $this->aiProvider = $this->resolveProvider($provider);
+        $this->aiProvider = $this->resolveProvider($scrapingData->aiProvider);
 
         try {
-            $response = $this->getProductDescription($product, $promptLength);
+            $scrapedContent = $product->getFullParsedText();
+
+            if (empty(trim($scrapedContent))) {
+                throw new EmptyScrapedContentException();
+            }
+
+            $prompt = $this->buildPrompt($product->name, $scrapedContent, $scrapingData);
+
+            $response = $this->aiProvider->generate($prompt);
 
             $description = $product->generatedDescriptions()->create([
                 'title' => $product->name,
@@ -51,27 +61,13 @@ class AIProviderService
         return $this->factory->make($provider);
     }
 
-    private function getProductDescription(Product $product, string $promptLength): string
-    {
-        $scrapedContent = $product->getFullParsedText();
-
-        if (empty(trim($scrapedContent))) {
-            throw new EmptyScrapedContentException();
-        }
-
-        $prompt = $this->buildPrompt($product->name, $scrapedContent, $promptLength);
-
-        return $this->aiProvider->generate($prompt);
-    }
-
-    private function buildPrompt(string $productName, string $scrapedContent, string $promptLength): string
+    private function buildPrompt(string $productName, string $scrapedContent, ProductScrapingData $scrapingData): string
     {
         $template = file_get_contents(resource_path('prompts/product-description.txt'));
-        $promptSettings = config('app.describr.prompt_length_map')[$promptLength];
 
         return str_replace(
-            ['{productName}', '{scrapedContent}', '{promptLength}'],
-            [$productName, $scrapedContent, $promptSettings],
+            ['{productName}', '{scrapedContent}', '{targetAudience}', '{tone}', '{customDetails}'],
+            [$productName, $scrapedContent, $scrapingData->targetAudience, $scrapingData->tone, $scrapingData->customDetails],
             $template,
         );
     }
