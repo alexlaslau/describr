@@ -11,6 +11,11 @@ class ProductLink extends Model
 {
     use HasFactory;
 
+    protected $hidden = [
+        'parsed_content',
+        'error_message',
+    ];
+
     protected $fillable = [
         'url',
         'parsed_content',

@@ -34,11 +34,6 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
             ],
-            'config' => [
-                'maxLinksPerProduct' => config('app.describr.max_links_per_product'),
-                'targetAudiences' => config('app.describr.target_audiences'),
-                'tones' => config('app.describr.tones'),
-            ],
         ];
     }
 }

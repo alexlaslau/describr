@@ -45,9 +45,4 @@ export type PageProps<
     auth: {
         user: User;
     };
-    config: {
-        maxLinksPerProduct: number;
-        targetAudiences: string[];
-        tones: string[];
-    };
 };

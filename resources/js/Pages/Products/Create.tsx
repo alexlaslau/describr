@@ -1,6 +1,6 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { PageProps } from '@/types';
-import { Head, Link, router, usePage } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
 import { FormEvent, useState } from 'react';
 
 const STEPS = ['Name', 'Links', 'Review'];
@@ -55,8 +55,7 @@ function isValidUrl(urlString: string): boolean {
     }
 }
 
-export default function Create({ }: PageProps) {
-    const { config } = usePage<PageProps>().props;
+export default function Create({ config }: PageProps<{ config: { maxLinksPerProduct: number; targetAudiences: string[]; tones: string[] } }>) {
     const maxLinks = config.maxLinksPerProduct;
     const [step, setStep] = useState(0);
     const [name, setName] = useState('');

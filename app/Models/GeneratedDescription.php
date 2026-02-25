@@ -11,6 +11,10 @@ class GeneratedDescription extends Model
 {
     use HasFactory;
 
+    protected $hidden =[
+        'prompt_settings',
+    ];
+
     protected $fillable = [
         'title',
         'description',

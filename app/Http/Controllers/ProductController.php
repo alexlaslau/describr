@@ -31,7 +31,13 @@ class ProductController extends Controller
 
     public function create()
     {
-        return Inertia::render('Products/Create');
+        return Inertia::render('Products/Create', [
+            'config' => [
+                'maxLinksPerProduct' => config('app.describr.max_links_per_product'),
+                'targetAudiences' => config('app.describr.target_audiences'),
+                'tones' => config('app.describr.tones'),
+            ],
+        ]);
     }
 
     public function store(ProductStoreRequest $request)
