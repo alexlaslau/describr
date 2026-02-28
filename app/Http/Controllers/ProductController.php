@@ -22,7 +22,7 @@ class ProductController extends Controller
     {
         abort_if($product->user_id !== Auth::id(), 403);
 
-        $product->load(['productLinks', 'generatedDescriptions']);
+        $product->load(['productLinks', 'generatedDescriptions', 'images']);
 
         return Inertia::render('Products/Show', [
             'product' => $product,

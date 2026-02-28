@@ -15,7 +15,7 @@ class DomCrawlerScraper implements ScraperInterface
     {
         $html = $this->fetchHtml($url);
 
-        return $this->parse($html);
+        return $this->parse($html, $url);
     }
 
     private function fetchHtml(string $url): string
@@ -33,7 +33,7 @@ class DomCrawlerScraper implements ScraperInterface
         return $response->body();
     }
 
-    private function parse(string $html): ScrapedData
+    private function parse(string $html, string $url): ScrapedData
     {
         $this->crawler = new Crawler($html);
 
@@ -44,7 +44,8 @@ class DomCrawlerScraper implements ScraperInterface
             ogDescription: $this->extractOg('og:description'),
             ogImage: $this->extractOg('og:image'),
             jsonLd: $this->extractJsonLd(),
-            bodyText: $this->extractBodyText()
+            bodyText: $this->extractBodyText(),
+            images: $this->extractImages($url),
         );
     }
 
@@ -119,5 +120,64 @@ class DomCrawlerScraper implements ScraperInterface
         }
 
         return $text;
+    }
+
+    private function extractImages(string $url): array
+    {
+        $minSize = config('app.describr.min_image_dimension_pixels', 300);
+
+        $images = $this->crawler->filter('img')->each(function (Crawler $node) {
+            return [
+                'src' => $node->attr('src') ?? $node->attr('data-src') ?? '',
+                'alt' => $node->attr('alt') ?? '',
+                'width' => (int) ($node->attr('width') ?? 0),
+                'height' => (int) ($node->attr('height') ?? 0),
+            ];
+        });
+
+        $baseUrl = parse_url($url, PHP_URL_SCHEME) . '://' . parse_url($url, PHP_URL_HOST);
+
+        return collect($images)
+            ->filter(fn ($img) => !empty($img['src']))
+            ->map(function ($img) use ($baseUrl) {
+                if (!str_starts_with($img['src'], 'http')) {
+                    $img['src'] = rtrim($baseUrl, '/') . '/' . ltrim($img['src'], '/');
+                }
+                return $img;
+            })
+            ->filter(function ($img) use ($minSize) {
+                if ($img['width'] > 0 && $img['width'] < $minSize) return false;
+                if ($img['height'] > 0 && $img['height'] < $minSize) return false;
+                return true;
+            })
+            ->filter(fn ($img) => !str_contains(strtolower($img['src']), 'icon'))
+            ->filter(fn ($img) => !str_contains(strtolower($img['src']), 'logo'))
+            ->filter(fn ($img) => !str_contains(strtolower($img['src']), 'pixel'))
+            ->filter(fn ($img) => !str_contains(strtolower($img['src']), 'svg'))
+            ->filter(fn ($img) => preg_match('/\.(jpg|jpeg|png|webp)/i', $img['src']))
+            ->unique('src')
+            ->take(10)
+            ->filter(function ($img) use ($minSize) {
+                if ($img['width'] >= $minSize && $img['height'] >= $minSize) {
+                    return true;
+                }
+
+                if ($img['width'] > 0 || $img['height'] > 0) {
+                    return false;
+                }
+
+                try {
+                    $size = @getimagesize($img['src']);
+                    if ($size && ($size[0] < $minSize || $size[1] < $minSize)) {
+                        return false;
+                    }
+                } catch (\Throwable) {
+                    // If we can't check, keep the image
+                }
+
+                return true;
+            })
+            ->values()
+            ->all();
     }
 }

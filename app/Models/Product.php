@@ -40,6 +40,11 @@ class Product extends Model
         return $this->hasMany(ProductLink::class);
     }
 
+    public function images(): HasMany
+    {
+        return $this->hasMany(ProductImage::class);
+    }
+
     public function scopeWithLinkCount($query)
     {
         return $query->withCount('productLinks');

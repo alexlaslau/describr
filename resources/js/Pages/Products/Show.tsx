@@ -1,5 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Product, ProductLink, GeneratedDescription, PageProps } from '@/types';
+import { Product, ProductLink, GeneratedDescription, ProductImage, PageProps } from '@/types';
 import { Head, Link, router } from '@inertiajs/react';
 import { useState, useEffect } from 'react';
 
@@ -129,6 +129,7 @@ function ProcessingBanner({ status }: { status: string }) {
 export default function Show({ product }: PageProps<{ product: Product }>) {
     const links = product.product_links ?? [];
     const descriptions = product.generated_descriptions ?? [];
+    const images = product.images ?? [];
     const isProcessing = PROCESSING_STATUSES.includes(product.status);
     const [copied, setCopied] = useState(false);
 
@@ -208,11 +209,10 @@ export default function Show({ product }: PageProps<{ product: Product }>) {
                             <div className="flex items-center justify-end mb-3">
                                 <button
                                     onClick={copyDescription}
-                                    className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-all ${
-                                        copied
+                                    className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-all ${copied
                                             ? 'bg-emerald-50 text-emerald-600 border border-emerald-200'
                                             : 'bg-gray-50 text-gray-500 border border-gray-200 hover:bg-gray-100 hover:text-gray-700'
-                                    }`}
+                                        }`}
                                 >
                                     {copied ? (
                                         <>
@@ -253,6 +253,39 @@ export default function Show({ product }: PageProps<{ product: Product }>) {
                         </div>
                     )}
                 </section>
+
+                {/* Scraped Images */}
+                {images.length > 0 && (
+                    <section className="mt-12">
+                        <h2 className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                            Product Images
+                            <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-500">{images.length}</span>
+                        </h2>
+                        <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+                            {images.map((image: ProductImage) => (
+                                <a
+                                    key={image.id}
+                                    href={image.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="group overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-all hover:shadow-md hover:border-indigo-200"
+                                >
+                                    <img
+                                        src={image.url}
+                                        alt={image.alt ?? 'Product image'}
+                                        className="h-48 w-full object-contain p-2 transition-transform group-hover:scale-105"
+                                        onError={(e) => {
+                                            (e.currentTarget.parentElement as HTMLElement).style.display = 'none';
+                                        }}
+                                    />
+                                </a>
+                            ))}
+                        </div>
+                    </section>
+                )}
 
                 {/* Links */}
                 <section className="mt-12">

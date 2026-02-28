@@ -35,4 +35,9 @@ class ProductLink extends Model
     {
         return $this->belongsTo(Product::class);
     }
+
+    public function images(): HasMany
+    {
+        return $this->hasMany(ProductImage::class);
+    }
 }

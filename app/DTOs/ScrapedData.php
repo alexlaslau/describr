@@ -12,6 +12,7 @@ class ScrapedData
         public readonly ?string $ogImage = null,
         public readonly ?array $jsonLd = null,
         public readonly ?string $bodyText = null,
+        public readonly array $images = [],
     ) {}
 
     public function toPromptText(): string
@@ -56,6 +57,7 @@ class ScrapedData
             'og_image' => $this->ogImage,
             'json_ld' => $this->jsonLd,
             'body_text' => $this->bodyText,
+            'images' => $this->images,
         ];
     }
 }

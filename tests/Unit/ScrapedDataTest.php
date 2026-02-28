@@ -110,6 +110,7 @@ describe('ScrapedData', function () {
                 'og_image' => 'https://example.com/image.jpg',
                 'json_ld' => $jsonLd,
                 'body_text' => 'Body',
+                'images' => [],
             ]);
         });
 
@@ -118,7 +119,7 @@ describe('ScrapedData', function () {
 
             $array = $data->toArray();
 
-            expect($array)->toHaveCount(7);
+            expect($array)->toHaveCount(8);
             expect(array_filter($array))->toBeEmpty();
         });
     });

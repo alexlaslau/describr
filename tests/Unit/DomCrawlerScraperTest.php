@@ -217,6 +217,145 @@ describe('DomCrawlerScraper', function () {
         });
     });
 
+    describe('image extraction', function () {
+
+        it('extracts images with src and alt', function () {
+            $html = '<html><head></head><body>'
+                . '<img src="https://example.com/photo1.jpg" alt="Product photo">'
+                . '<img src="https://example.com/photo2.png" alt="Another photo">'
+                . '</body></html>';
+
+            fakeHtmlResponse($html);
+
+            $result = $this->scraper->scrape('https://example.com/product');
+
+            expect($result->images)->toHaveCount(2);
+            expect($result->images[0]['src'])->toBe('https://example.com/photo1.jpg');
+            expect($result->images[0]['alt'])->toBe('Product photo');
+            expect($result->images[1]['src'])->toBe('https://example.com/photo2.png');
+        });
+
+        it('resolves relative URLs to absolute', function () {
+            $html = '<html><head></head><body>'
+                . '<img src="/images/product.jpg" alt="Relative">'
+                . '</body></html>';
+
+            fakeHtmlResponse($html);
+
+            $result = $this->scraper->scrape('https://example.com/product');
+
+            expect($result->images)->toHaveCount(1);
+            expect($result->images[0]['src'])->toBe('https://example.com/images/product.jpg');
+        });
+
+        it('uses data-src as fallback for lazy-loaded images', function () {
+            $html = '<html><head></head><body>'
+                . '<img data-src="https://example.com/lazy.jpg" alt="Lazy image">'
+                . '</body></html>';
+
+            fakeHtmlResponse($html);
+
+            $result = $this->scraper->scrape('https://example.com/product');
+
+            expect($result->images)->toHaveCount(1);
+            expect($result->images[0]['src'])->toBe('https://example.com/lazy.jpg');
+        });
+
+        it('filters out icons, logos, pixels, and svgs', function () {
+            $html = '<html><head></head><body>'
+                . '<img src="https://example.com/icon-cart.png" alt="Icon">'
+                . '<img src="https://example.com/site-logo.jpg" alt="Logo">'
+                . '<img src="https://example.com/tracking-pixel.png" alt="">'
+                . '<img src="https://example.com/graphic.svg" alt="SVG">'
+                . '<img src="https://example.com/real-product.jpg" alt="Product">'
+                . '</body></html>';
+
+            fakeHtmlResponse($html);
+
+            $result = $this->scraper->scrape('https://example.com/product');
+
+            expect($result->images)->toHaveCount(1);
+            expect($result->images[0]['src'])->toBe('https://example.com/real-product.jpg');
+        });
+
+        it('filters out images smaller than the configured minimum dimension', function () {
+            config(['app.describr.min_image_dimension_pixels' => 300]);
+
+            $html = '<html><head></head><body>'
+                . '<img src="https://example.com/tiny.jpg" width="100" height="100" alt="Tiny">'
+                . '<img src="https://example.com/small-width.jpg" width="200" height="500" alt="Small W">'
+                . '<img src="https://example.com/small-height.jpg" width="500" height="150" alt="Small H">'
+                . '<img src="https://example.com/big.jpg" width="800" height="600" alt="Big">'
+                . '<img src="https://example.com/no-dimensions.jpg" alt="No dims">'
+                . '</body></html>';
+
+            fakeHtmlResponse($html);
+
+            $result = $this->scraper->scrape('https://example.com/product');
+
+            $srcs = array_column($result->images, 'src');
+
+            expect($srcs)->not->toContain('https://example.com/tiny.jpg');
+            expect($srcs)->not->toContain('https://example.com/small-width.jpg');
+            expect($srcs)->not->toContain('https://example.com/small-height.jpg');
+            expect($srcs)->toContain('https://example.com/big.jpg');
+            expect($srcs)->toContain('https://example.com/no-dimensions.jpg');
+        });
+
+        it('only keeps jpg, jpeg, png, and webp formats', function () {
+            $html = '<html><head></head><body>'
+                . '<img src="https://example.com/photo.jpg" alt="">'
+                . '<img src="https://example.com/photo.webp" alt="">'
+                . '<img src="https://example.com/photo.gif" alt="">'
+                . '<img src="https://example.com/photo.bmp" alt="">'
+                . '</body></html>';
+
+            fakeHtmlResponse($html);
+
+            $result = $this->scraper->scrape('https://example.com/product');
+
+            expect($result->images)->toHaveCount(2);
+            $srcs = array_column($result->images, 'src');
+            expect($srcs)->toContain('https://example.com/photo.jpg');
+            expect($srcs)->toContain('https://example.com/photo.webp');
+        });
+
+        it('deduplicates images by src', function () {
+            $html = '<html><head></head><body>'
+                . '<img src="https://example.com/same.jpg" alt="First">'
+                . '<img src="https://example.com/same.jpg" alt="Duplicate">'
+                . '</body></html>';
+
+            fakeHtmlResponse($html);
+
+            $result = $this->scraper->scrape('https://example.com/product');
+
+            expect($result->images)->toHaveCount(1);
+        });
+
+        it('limits to a maximum of 10 images', function () {
+            $imgTags = '';
+            for ($i = 1; $i <= 15; $i++) {
+                $imgTags .= '<img src="https://example.com/photo' . $i . '.jpg" alt="Photo ' . $i . '">';
+            }
+            $html = '<html><head></head><body>' . $imgTags . '</body></html>';
+
+            fakeHtmlResponse($html);
+
+            $result = $this->scraper->scrape('https://example.com/product');
+
+            expect($result->images)->toHaveCount(10);
+        });
+
+        it('returns empty array when no images exist', function () {
+            fakeHtmlResponse('<html><head></head><body><p>No images here</p></body></html>');
+
+            $result = $this->scraper->scrape('https://example.com/product');
+
+            expect($result->images)->toBeEmpty();
+        });
+    });
+
     describe('full scrape integration', function () {
 
         it('parses a complete product page', function () {

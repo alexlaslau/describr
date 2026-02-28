@@ -132,6 +132,7 @@ return [
     'describr' => [
         'max_characters_per_source' => 5000,
         'max_links_per_product' => 8,
+        'min_image_dimension_pixels' => 600,
         'target_audiences' => [
             'Femei 25-45 ani, mame, gospodine',
             'Barbati 30-50 ani, practici',

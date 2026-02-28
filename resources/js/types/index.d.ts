@@ -25,6 +25,14 @@ export interface GeneratedDescription {
     updated_at: string;
 }
 
+export interface ProductImage {
+    id: number;
+    product_id: number;
+    product_link_id: number;
+    url: string;
+    alt: string | null;
+}
+
 export interface Product {
     id: number;
     user_id: number;
@@ -35,6 +43,7 @@ export interface Product {
     product_links_count?: number;
     product_links?: ProductLink[];
     generated_descriptions?: GeneratedDescription[];
+    images?: ProductImage[];
     created_at: string;
     updated_at: string;
 }

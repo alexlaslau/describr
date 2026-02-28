@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\ProductLink;
+use App\Models\ProductImage;
 use App\Interfaces\ScraperInterface;
 
 class ScrapingService
@@ -23,6 +24,15 @@ class ScrapingService
                 'status' => 'scraped',
                 'scraped_at' => now(),
             ]);
+
+            foreach ($result->images as $image) {
+                ProductImage::create([
+                    'product_link_id' => $link->id,
+                    'product_id' => $link->product_id,
+                    'url' => $image['src'],
+                    'alt' => $image['alt'],
+                ]);
+            }
         } catch (\Exception $e) {
             \Log::error("[ScrapingService] Scraping failed for link #{$link->id} ({$link->url}): {$e->getMessage()}");
 
