@@ -5,6 +5,7 @@ namespace App\Services\Scrapers;
 use App\DTOs\ScrapedData;
 use App\Interfaces\ScraperInterface;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\DomCrawler\Crawler;
 
 class DomCrawlerScraper implements ScraperInterface
@@ -145,11 +146,6 @@ class DomCrawlerScraper implements ScraperInterface
                 }
                 return $img;
             })
-            ->filter(function ($img) use ($minSize) {
-                if ($img['width'] > 0 && $img['width'] < $minSize) return false;
-                if ($img['height'] > 0 && $img['height'] < $minSize) return false;
-                return true;
-            })
             ->filter(fn ($img) => !str_contains(strtolower($img['src']), 'icon'))
             ->filter(fn ($img) => !str_contains(strtolower($img['src']), 'logo'))
             ->filter(fn ($img) => !str_contains(strtolower($img['src']), 'pixel'))
@@ -158,21 +154,14 @@ class DomCrawlerScraper implements ScraperInterface
             ->unique('src')
             ->take(10)
             ->filter(function ($img) use ($minSize) {
-                if ($img['width'] >= $minSize && $img['height'] >= $minSize) {
-                    return true;
-                }
-
-                if ($img['width'] > 0 || $img['height'] > 0) {
-                    return false;
-                }
-
                 try {
-                    $size = @getimagesize($img['src']);
+                    $size = getimagesize($img['src']);
                     if ($size && ($size[0] < $minSize || $size[1] < $minSize)) {
                         return false;
                     }
-                } catch (\Throwable) {
-                    // If we can't check, keep the image
+                } catch (\Throwable $e) {
+                    Log::error('[DomCrawlerScraper] - Failed to get image size: ' . $e->getMessage());
+                    return false;
                 }
 
                 return true;
