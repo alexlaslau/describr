@@ -29,6 +29,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::resource('products', ProductController::class)->only(['index', 'show', 'create', 'store']);
+    Route::get('/products/{product}/images/download-all', [ProductController::class, 'downloadAllImages'])->name('products.images.download-all');
     Route::get('/products/{product}/images/{image}/download', [ProductController::class, 'downloadImage'])->name('products.images.download');
 });
 

@@ -72,4 +72,31 @@ class ProductController extends Controller
             'Content-Disposition' => "attachment; filename=\"{$filename}\"",
         ]);
     }
+
+    public function downloadAllImages(Product $product)
+    {
+        abort_if($product->user_id !== Auth::id(), 403);
+
+        $product->load('images');
+        abort_if($product->images->isEmpty(), 404);
+
+        $zipPath = tempnam(sys_get_temp_dir(), 'images_') . '.zip';
+        $zip = new \ZipArchive();
+        $zip->open($zipPath, \ZipArchive::CREATE);
+
+        foreach ($product->images as $image) {
+            $response = Http::get($image->url);
+            if ($response->successful()) {
+                $ext = pathinfo(parse_url($image->url, PHP_URL_PATH), PATHINFO_EXTENSION) ?: 'jpg';
+                $zip->addFromString("image-{$image->id}.{$ext}", $response->body());
+            }
+        }
+
+        $zip->close();
+
+        $safeName = preg_replace('/[^a-zA-Z0-9_-]/', '_', $product->name);
+
+        return response()->download($zipPath, "{$safeName}-images.zip")
+            ->deleteFileAfterSend();
+    }
 }
