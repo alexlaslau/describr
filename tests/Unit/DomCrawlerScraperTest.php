@@ -289,12 +289,34 @@ describe('DomCrawlerScraper', function () {
             expect($result->images[0]['src'])->toBe('https://example.com/real-product.jpg');
         });
 
-        it('filters out images smaller than the configured minimum dimension', function () {
+        it('filters out images smaller than the configured minimum dimension via HTML attributes', function () {
+            config(['app.describr.min_image_dimension_pixels' => 300]);
+
+            $html = '<html><head></head><body>'
+                . '<img src="https://example.com/tiny.jpg" width="100" height="100" alt="Tiny">'
+                . '<img src="https://example.com/small-width.jpg" width="200" height="500" alt="Small W">'
+                . '<img src="https://example.com/small-height.jpg" width="500" height="150" alt="Small H">'
+                . '<img src="https://example.com/big.jpg" width="800" height="600" alt="Big">'
+                . '</body></html>';
+
+            fakeHtmlResponse($html);
+
+            $result = $this->scraper->scrape('https://example.com/product');
+
+            $srcs = array_column($result->images, 'src');
+
+            expect($srcs)->not->toContain('https://example.com/tiny.jpg');
+            expect($srcs)->not->toContain('https://example.com/small-width.jpg');
+            expect($srcs)->not->toContain('https://example.com/small-height.jpg');
+            expect($srcs)->toContain('https://example.com/big.jpg');
+        });
+
+        it('falls back to getimagesize when HTML dimensions are missing', function () {
             // Mock getimagesize returns 1000x1000, so set threshold above that
             config(['app.describr.min_image_dimension_pixels' => 2000]);
 
             $html = '<html><head></head><body>'
-                . '<img src="https://example.com/photo.jpg" alt="Photo">'
+                . '<img src="https://example.com/no-dims.jpg" alt="No dims">'
                 . '</body></html>';
 
             fakeHtmlResponse($html);
