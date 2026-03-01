@@ -105,7 +105,10 @@ class DomCrawlerScraper implements ScraperInterface
             return null;
         }
 
-        $this->crawler->filter('script, style, nav, footer, header, iframe, noscript')->each(function (Crawler $node) {
+        $this->crawler->filter(
+            'script, style, nav, footer, header, iframe, noscript, aside, form, 
+            [role="navigation"], [role="complementary"], [role="banner"], [role="contentinfo"]'
+        )->each(function (Crawler $node) {
             $domNode = $node->getNode(0);
             $domNode->parentNode->removeChild($domNode);
         });
