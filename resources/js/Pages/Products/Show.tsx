@@ -288,10 +288,8 @@ export default function Show({ product }: PageProps<{ product: Product }>) {
                                 {images.map((image: ProductImage) => (
                                     <a
                                         key={image.id}
-                                        href={image.url}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="group overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-all hover:shadow-md hover:border-indigo-200"
+                                        href={route('products.images.download', { product: product.id, image: image.id })}
+                                        className="group relative overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-all hover:shadow-md hover:border-indigo-200"
                                     >
                                         <img
                                             src={image.url}
@@ -301,6 +299,13 @@ export default function Show({ product }: PageProps<{ product: Product }>) {
                                                 (e.currentTarget.parentElement as HTMLElement).style.display = 'none';
                                             }}
                                         />
+                                        <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition-all group-hover:bg-black/10">
+                                            <div className="rounded-full bg-white/90 p-2 opacity-0 shadow-sm transition-opacity group-hover:opacity-100">
+                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                                </svg>
+                                            </div>
+                                        </div>
                                     </a>
                                 ))}
                             </div>

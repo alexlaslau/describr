@@ -6,6 +6,7 @@ use App\Models\Product;
 use App\Http\Requests\ProductStoreRequest;
 use App\DTOs\ProductScrapingData;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 use App\Jobs\ScrapeProduct;
 use Inertia\Inertia;
 
@@ -53,5 +54,22 @@ class ProductController extends Controller
         ScrapeProduct::dispatch($scrapingData);
 
         return redirect()->route('products.show', $product);
+    }
+
+    public function downloadImage(Product $product, \App\Models\ProductImage $image)
+    {
+        abort_if($product->user_id !== Auth::id(), 403);
+        abort_if($image->product_id !== $product->id, 404);
+
+        $response = Http::get($image->url);
+        abort_if($response->failed(), 404);
+
+        $extension = pathinfo(parse_url($image->url, PHP_URL_PATH), PATHINFO_EXTENSION) ?: 'jpg';
+        $filename = "image-{$image->id}.{$extension}";
+
+        return response($response->body(), 200, [
+            'Content-Type' => $response->header('Content-Type') ?? 'image/jpeg',
+            'Content-Disposition' => "attachment; filename=\"{$filename}\"",
+        ]);
     }
 }
