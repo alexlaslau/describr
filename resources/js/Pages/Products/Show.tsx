@@ -168,9 +168,9 @@ export default function Show({ product }: PageProps<{ product: Product }>) {
                 </Link>
 
                 {/* Header */}
-                <div className="mt-8 flex items-start justify-between">
+                <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                     <div>
-                        <div className="flex items-center gap-3">
+                        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                             <h1 className="text-2xl font-bold tracking-tight text-gray-900">
                                 {product.name}
                             </h1>

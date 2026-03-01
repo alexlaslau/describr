@@ -7,12 +7,12 @@ const STEPS = ['Name', 'Links', 'Review'];
 
 function StepIndicator({ currentStep }: { currentStep: number }) {
     return (
-        <div className="flex items-center justify-center gap-2">
+        <div className="flex items-center justify-center gap-1 sm:gap-2">
             {STEPS.map((label, i) => (
-                <div key={label} className="flex items-center gap-2">
-                    <div className="flex items-center gap-2.5">
+                <div key={label} className="flex items-center gap-1 sm:gap-2">
+                    <div className="flex items-center gap-1.5 sm:gap-2.5">
                         <span
-                            className={`flex h-9 w-9 items-center justify-center rounded-full text-sm font-semibold transition-all ${i < currentStep
+                            className={`flex h-7 w-7 sm:h-9 sm:w-9 items-center justify-center rounded-full text-xs sm:text-sm font-semibold transition-all ${i < currentStep
                                 ? 'bg-indigo-600 text-white shadow-sm shadow-indigo-600/25'
                                 : i === currentStep
                                     ? 'bg-indigo-600 text-white shadow-sm shadow-indigo-600/25'
@@ -20,7 +20,7 @@ function StepIndicator({ currentStep }: { currentStep: number }) {
                                 }`}
                         >
                             {i < currentStep ? (
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 sm:h-4 sm:w-4" viewBox="0 0 20 20" fill="currentColor">
                                     <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                                 </svg>
                             ) : (
@@ -28,7 +28,7 @@ function StepIndicator({ currentStep }: { currentStep: number }) {
                             )}
                         </span>
                         <span
-                            className={`text-sm font-medium transition-colors ${i <= currentStep ? 'text-gray-900' : 'text-gray-400'
+                            className={`text-xs sm:text-sm font-medium transition-colors ${i <= currentStep ? 'text-gray-900' : 'text-gray-400'
                                 }`}
                         >
                             {label}
@@ -36,7 +36,7 @@ function StepIndicator({ currentStep }: { currentStep: number }) {
                     </div>
                     {i < STEPS.length - 1 && (
                         <div
-                            className={`mx-3 h-px w-14 transition-colors ${i < currentStep ? 'bg-indigo-600' : 'bg-gray-200'
+                            className={`mx-1 sm:mx-3 h-px w-6 sm:w-14 transition-colors ${i < currentStep ? 'bg-indigo-600' : 'bg-gray-200'
                                 }`}
                         />
                     )}
