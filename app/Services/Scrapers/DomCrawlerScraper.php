@@ -157,6 +157,10 @@ class DomCrawlerScraper implements ScraperInterface
             ->unique('src')
             ->take(10)
             ->filter(function ($img) use ($minSize) {
+                if ($img['width'] > 0 && $img['height'] > 0) {
+                    return $img['width'] >= $minSize && $img['height'] >= $minSize;
+                }
+
                 try {
                     $size = getimagesize($img['src']);
                     if ($size && ($size[0] < $minSize || $size[1] < $minSize)) {
