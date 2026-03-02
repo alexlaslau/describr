@@ -93,23 +93,22 @@ export default function LiveWorkflowDemo() {
         activeStep === 1
             ? (typedLength / productName.length) * 34
             : activeStep === 2
-              ? 34 + (urlStatuses.filter((status) => status === 'done').length / urlSources.length) * 33
-              : activeStep === 3
-                ? 67 + (visibleWords / generatedWords.length) * 28
-                : 100;
+                ? 34 + (urlStatuses.filter((status) => status === 'done').length / urlSources.length) * 33
+                : activeStep === 3
+                    ? 67 + (visibleWords / generatedWords.length) * 28
+                    : 100;
 
     const streamedText = generatedWords.slice(0, visibleWords).join(' ');
 
     const stepClass = (stepNumber: 1 | 2 | 3) => {
         const isActive = activeStep === stepNumber;
         const isDone = activeStep > stepNumber;
-        return `rounded-2xl border p-4 transition-all duration-500 ${
-            isActive
+        return `rounded-2xl border p-4 transition-all duration-500 ${isActive
                 ? 'border-indigo-300/50 bg-indigo-300/10 shadow-lg shadow-indigo-500/20'
                 : isDone
-                  ? 'border-emerald-300/30 bg-emerald-300/10'
-                  : 'border-white/10 bg-white/5'
-        }`;
+                    ? 'border-emerald-300/30 bg-emerald-300/10'
+                    : 'border-white/10 bg-white/5'
+            }`;
     };
 
     return (
@@ -126,9 +125,8 @@ export default function LiveWorkflowDemo() {
 
                 <div className="relative pl-8 sm:pl-10">
                     <span
-                        className={`absolute left-[5px] top-5 h-3 w-3 rounded-full ring-4 ring-gray-950 sm:left-[7px] ${
-                            activeStep >= 1 ? 'bg-indigo-300' : 'bg-white/30'
-                        }`}
+                        className={`absolute left-[5px] top-5 h-3 w-3 rounded-full ring-4 ring-gray-950 sm:left-[7px] ${activeStep >= 1 ? 'bg-indigo-300' : 'bg-white/30'
+                            }`}
                     />
                     <div className={stepClass(1)}>
                         <p className="text-[11px] uppercase tracking-[0.16em] text-gray-300">Step 1 · Product</p>
@@ -141,9 +139,8 @@ export default function LiveWorkflowDemo() {
 
                 <div className="relative pl-8 sm:pl-10">
                     <span
-                        className={`absolute left-[5px] top-5 h-3 w-3 rounded-full ring-4 ring-gray-950 sm:left-[7px] ${
-                            activeStep >= 2 ? 'bg-indigo-300' : 'bg-white/30'
-                        }`}
+                        className={`absolute left-[5px] top-5 h-3 w-3 rounded-full ring-4 ring-gray-950 sm:left-[7px] ${activeStep >= 2 ? 'bg-indigo-300' : 'bg-white/30'
+                            }`}
                     />
                     <div className={stepClass(2)}>
                         <p className="text-[11px] uppercase tracking-[0.16em] text-gray-300">Step 2 · Sources</p>
@@ -184,9 +181,8 @@ export default function LiveWorkflowDemo() {
 
                 <div className="relative pl-8 sm:pl-10">
                     <span
-                        className={`absolute left-[5px] top-5 h-3 w-3 rounded-full ring-4 ring-gray-950 sm:left-[7px] ${
-                            activeStep >= 3 ? 'bg-indigo-300' : 'bg-white/30'
-                        }`}
+                        className={`absolute left-[5px] top-5 h-3 w-3 rounded-full ring-4 ring-gray-950 sm:left-[7px] ${activeStep >= 3 ? 'bg-indigo-300' : 'bg-white/30'
+                            }`}
                     />
                     <div className={stepClass(3)}>
                         <p className="text-[11px] uppercase tracking-[0.16em] text-gray-300">Step 3 · AI Generation</p>
@@ -199,18 +195,16 @@ export default function LiveWorkflowDemo() {
             </div>
 
             <div
-                className={`mt-4 rounded-xl border px-4 py-3 text-xs transition-all duration-500 sm:mt-5 sm:text-sm ${
-                    activeStep === 4
+                className={`mt-4 rounded-xl border px-4 py-3 text-xs transition-all duration-500 sm:mt-5 sm:text-sm ${activeStep === 4
                         ? 'border-emerald-300/40 bg-emerald-300/15 text-emerald-100'
                         : 'border-white/10 bg-white/5 text-gray-400'
-                }`}
+                    }`}
             >
                 <div className="flex items-center gap-2">
                     <span className="relative inline-flex h-2.5 w-2.5">
                         <span
-                            className={`absolute inline-flex h-full w-full rounded-full bg-emerald-300 ${
-                                completionPulse ? 'animate-ping' : ''
-                            }`}
+                            className={`absolute inline-flex h-full w-full rounded-full bg-emerald-300 ${completionPulse ? 'animate-ping' : ''
+                                }`}
                         />
                         <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-300" />
                     </span>
@@ -218,7 +212,7 @@ export default function LiveWorkflowDemo() {
                         {activeStep === 4 ? 'Done. Description generated.' : 'Running automated workflow...'}
                     </span>
                 </div>
-                <p className="mt-1 text-[11px] text-emerald-100/90 sm:text-xs">Output ready in under a minute, then loop restarts.</p>
+                <p className="mt-1 text-[11px] text-emerald-100/90 sm:text-xs">Output ready in under a minute.</p>
             </div>
         </div>
     );
