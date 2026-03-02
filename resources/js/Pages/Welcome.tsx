@@ -54,7 +54,7 @@ export default function Welcome({ auth, canLogin, canRegister, stats }: WelcomeP
 
     return (
         <>
-            <Head title="Describr" />
+            <Head title="Welcome" />
 
             <div className="min-h-screen relative overflow-hidden bg-gray-950 text-gray-100">
                 <div className="pointer-events-none absolute inset-x-0 top-[-8rem] z-0 mx-auto h-[28rem] w-[90vw] max-w-6xl rounded-full bg-indigo-500/20 blur-3xl" />
