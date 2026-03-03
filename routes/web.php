@@ -33,4 +33,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/products/{product}/images/{image}/download', [ProductController::class, 'downloadImage'])->name('products.images.download');
 });
 
+Route::fallback(function () {
+    abort(404, 'The page you searched for does not exist.');
+});
+
 require __DIR__.'/auth.php';
