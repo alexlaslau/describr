@@ -7,7 +7,8 @@ use App\DTOs\ProductScrapingData;
 use App\Interfaces\AIProviderInterface;
 use App\Exceptions\EmptyScrapedContentException;
 use App\Services\AIProviders\AIProviderFactory;
-use Illuminate\Support\Facades\Log;
+use App\Events\DescriptionGenerated;
+use App\Events\DescriptionFailed;
 
 class AIProviderService
 {
@@ -48,11 +49,14 @@ class AIProviderService
                 'generated_at' => now(),
             ]);
 
+            DescriptionGenerated::dispatch($product, $description);
+
             return $description;
         } catch (\Exception $e) {
-            Log::error("[AIProviderService] Description generation failed for product #{$product->id} ({$product->name}): {$e->getMessage()}");
-
             $product->update(['status' => 'failed']);
+
+            DescriptionFailed::dispatch($product, $e);
+
             throw $e;
         }
     }

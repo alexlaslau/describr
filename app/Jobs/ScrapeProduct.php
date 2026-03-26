@@ -3,9 +3,9 @@
 namespace App\Jobs;
 
 use App\DTOs\ProductScrapingData;
+use App\Events\ProductScraped;
 use Illuminate\Bus\Batch;
 use Illuminate\Support\Facades\Bus;
-use App\Jobs\GenerateProductDescription;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 
@@ -35,7 +35,8 @@ class ScrapeProduct implements ShouldQueue
         Bus::batch($jobs)
             ->then(function (Batch $batch) use ($scrapingData) {
                 $scrapingData->product->update(['status' => 'scraped']);
-                GenerateProductDescription::dispatch($scrapingData);
+
+                ProductScraped::dispatch($scrapingData);
             })
             ->catch(function (Batch $batch, \Throwable $e) use ($product) {
                 $product->update(['status' => 'failed']);
