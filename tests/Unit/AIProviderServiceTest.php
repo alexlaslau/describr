@@ -7,10 +7,13 @@ use App\Interfaces\AIProviderInterface;
 use App\Models\Product;
 use App\Models\GeneratedDescription;
 use App\Exceptions\EmptyScrapedContentException;
+use Illuminate\Support\Facades\Queue;
 
 uses(Tests\TestCase::class);
 
 beforeEach(function () {
+    Queue::fake();
+
     $this->mockModel = Mockery::mock(AIProviderInterface::class);
 
     $mockFactory = Mockery::mock(AIProviderFactory::class);
