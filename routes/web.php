@@ -37,4 +37,8 @@ Route::fallback(function () {
     abort(404, 'The page you searched for does not exist.');
 });
 
+Route::get('/test-error', function() {
+    throw new \RuntimeException("Custom exception triggered");
+});
+
 require __DIR__.'/auth.php';
