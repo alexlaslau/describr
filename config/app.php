@@ -148,6 +148,12 @@ return [
             'Urgent si direct',
             'Jucaus si amuzant',
         ],
+        'translation_languages' => [
+            'RO' => 'Romanian',
+            'DE' => 'German',
+            'FR' => 'French',
+            'ES' => 'Spanish',
+        ],
     ],
 
 ];

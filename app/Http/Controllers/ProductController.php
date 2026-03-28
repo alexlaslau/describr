@@ -23,10 +23,17 @@ class ProductController extends Controller
     {
         abort_if($product->user_id !== Auth::id(), 403);
 
-        $product->load(['productLinks', 'generatedDescriptions', 'images']);
+        $product->load([
+            'productLinks',
+            'images',
+            'generatedDescriptions' => fn ($query) => $query->latest()->with('translations'),
+        ]);
 
         return Inertia::render('Products/Show', [
             'product' => $product,
+            'config' => [
+                'translationLanguages' => config('app.describr.translation_languages'),
+            ],
         ]);
     }
 

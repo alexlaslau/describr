@@ -22,6 +22,11 @@ return [
         'key' => env('ANTHROPIC_API_KEY'),
     ],
 
+    'deepl' => [
+        'key' => env('DEEPL_API_KEY'),
+        'url' => env('DEEPL_API_URL', 'https://api-free.deepl.com/v2/translate'),
+    ],
+
     'postmark' => [
         'key' => env('POSTMARK_API_KEY'),
     ],

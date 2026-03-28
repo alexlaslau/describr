@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Facades\Http;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class GeneratedDescription extends Model
 {
@@ -28,5 +28,10 @@ class GeneratedDescription extends Model
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
+    }
+
+    public function translations(): HasMany
+    {
+        return $this->hasMany(DescriptionTranslation::class);
     }
 }

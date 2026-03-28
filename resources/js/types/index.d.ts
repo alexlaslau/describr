@@ -21,6 +21,21 @@ export interface GeneratedDescription {
     product_id: number;
     title: string;
     description: string;
+    translations?: DescriptionTranslation[];
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DescriptionTranslation {
+    id: number;
+    generated_description_id: number;
+    target_language: string;
+    source_language?: string | null;
+    provider: string;
+    status: 'pending' | 'processing' | 'completed' | 'failed';
+    translated_text?: string | null;
+    error_message?: string | null;
+    translated_at?: string | null;
     created_at: string;
     updated_at: string;
 }

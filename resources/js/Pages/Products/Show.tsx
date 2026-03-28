@@ -1,5 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Product, ProductLink, GeneratedDescription, ProductImage, PageProps } from '@/types';
+import { DescriptionTranslation, Product, ProductLink, GeneratedDescription, ProductImage, PageProps } from '@/types';
 import { Head, Link, router } from '@inertiajs/react';
 import { useState, useEffect } from 'react';
 
@@ -94,7 +94,57 @@ function DescriptionCard({ result }: { result: GeneratedDescription }) {
     );
 }
 
+function TranslationCard({ translation, languageLabel }: { translation: DescriptionTranslation; languageLabel: string }) {
+    const statusTone = {
+        pending: 'border-amber-200 bg-amber-50 text-amber-700',
+        processing: 'border-blue-200 bg-blue-50 text-blue-700',
+        completed: 'border-emerald-200 bg-emerald-50 text-emerald-700',
+        failed: 'border-red-200 bg-red-50 text-red-700',
+    }[translation.status];
+
+    return (
+        <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+            <div className="flex items-start justify-between gap-3">
+                <div>
+                    <h4 className="text-sm font-semibold text-gray-900">{languageLabel}</h4>
+                    <p className="mt-1 text-xs text-gray-400">
+                        DeepL{translation.source_language ? ` • detected ${translation.source_language}` : ''}
+                    </p>
+                </div>
+                <span className={`rounded-full border px-2.5 py-1 text-xs font-medium ${statusTone}`}>
+                    {translation.status}
+                </span>
+            </div>
+
+            {translation.translated_text && (
+                <div className="mt-4 text-sm leading-relaxed text-gray-700 whitespace-pre-line">
+                    {translation.translated_text}
+                </div>
+            )}
+
+            {!translation.translated_text && translation.status !== 'failed' && (
+                <p className="mt-4 text-sm text-gray-500">
+                    Translation is running in the background.
+                </p>
+            )}
+
+            {translation.error_message && (
+                <p className="mt-4 rounded-lg border border-red-100 bg-red-50 px-3 py-2 text-sm text-red-600">
+                    {translation.error_message}
+                </p>
+            )}
+
+            {translation.translated_at && (
+                <p className="mt-4 border-t border-gray-100 pt-3 text-xs text-gray-400">
+                    Translated {formatDate(translation.translated_at)}
+                </p>
+            )}
+        </div>
+    );
+}
+
 const PROCESSING_STATUSES = ['pending', 'scraping', 'scraped', 'generating'];
+const TRANSLATION_PROCESSING_STATUSES = ['pending', 'processing'];
 
 const PROCESSING_MESSAGES: Record<string, { title: string; subtitle: string }> = {
     pending: { title: 'Preparing...', subtitle: 'Getting ready to scrape your product links.' },
@@ -126,12 +176,16 @@ function ProcessingBanner({ status }: { status: string }) {
     );
 }
 
-export default function Show({ product }: PageProps<{ product: Product }>) {
+export default function Show({ product, config }: PageProps<{ product: Product; config: { translationLanguages: Record<string, string> } }>) {
     const links = product.product_links ?? [];
     const descriptions = product.generated_descriptions ?? [];
     const images = product.images ?? [];
+    const latestDescription = descriptions[0];
+    const translations = latestDescription?.translations ?? [];
     const isProcessing = PROCESSING_STATUSES.includes(product.status);
     const [copied, setCopied] = useState(false);
+    const [translatingLanguage, setTranslatingLanguage] = useState<string | null>(null);
+    const hasPendingTranslations = translations.some((translation) => TRANSLATION_PROCESSING_STATUSES.includes(translation.status));
 
     const copyDescription = () => {
         if (!product.generated_description) return;
@@ -141,15 +195,25 @@ export default function Show({ product }: PageProps<{ product: Product }>) {
         });
     };
 
+    const requestTranslation = (language: string) => {
+        setTranslatingLanguage(language);
+        router.post(route('products.translations.store', { product: product.id }), {
+            target_language: language,
+        }, {
+            preserveScroll: true,
+            onFinish: () => setTranslatingLanguage(null),
+        });
+    };
+
     useEffect(() => {
-        if (!isProcessing) return;
+        if (!isProcessing && !hasPendingTranslations) return;
 
         const interval = setInterval(() => {
             router.reload({ only: ['product'] });
         }, 3000);
 
         return () => clearInterval(interval);
-    }, [isProcessing]);
+    }, [hasPendingTranslations, isProcessing]);
 
     return (
         <AuthenticatedLayout>
@@ -253,6 +317,58 @@ export default function Show({ product }: PageProps<{ product: Product }>) {
                         </div>
                     )}
                 </section>
+
+                {latestDescription && (
+                    <section className="mt-8">
+                        <div className="flex flex-col gap-4 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+                            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                                <div>
+                                    <h2 className="text-xs font-semibold uppercase tracking-wider text-gray-400">
+                                        DeepL Translation
+                                    </h2>
+                                    <p className="mt-1 text-sm text-gray-500">
+                                        Translate the latest generated description with a dedicated HTTP client integration.
+                                    </p>
+                                </div>
+                                <div className="flex flex-wrap gap-2">
+                                    {Object.entries(config.translationLanguages).map(([code, label]) => {
+                                        const translation = translations.find((item) => item.target_language === code);
+                                        const hasTranslation = Boolean(translation);
+                                        const isBusy = translatingLanguage === code || translation?.status === 'pending' || translation?.status === 'processing';
+                                        const isDisabled = isBusy || hasTranslation;
+
+                                        return (
+                                            <button
+                                                key={code}
+                                                type="button"
+                                                onClick={() => requestTranslation(code)}
+                                                disabled={isDisabled}
+                                                className={`rounded-lg border px-3 py-2 text-xs font-medium transition ${isDisabled
+                                                    ? 'cursor-not-allowed border-gray-200 bg-gray-100 text-gray-400'
+                                                    : 'border-indigo-200 bg-indigo-50 text-indigo-700 hover:border-indigo-300 hover:bg-indigo-100'
+                                                    }`}
+                                            >
+                                                {isBusy ? `Translating ${code}...` : hasTranslation ? `${label} ready` : `Translate to ${label}`}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+
+                            {translations.length > 0 && (
+                                <div className="grid gap-4 lg:grid-cols-2">
+                                    {translations.map((translation) => (
+                                        <TranslationCard
+                                            key={translation.id}
+                                            translation={translation}
+                                            languageLabel={config.translationLanguages[translation.target_language] ?? translation.target_language}
+                                        />
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </section>
+                )}
 
                 {/* Scraped Images */}
                 {(images.length > 0 || isProcessing) && (
