@@ -31,4 +31,9 @@ class DescriptionTranslation extends Model
     {
         return $this->belongsTo(GeneratedDescription::class);
     }
+
+    public function productId(): int
+    {
+        return $this->generatedDescription->product_id;
+    }
 }
