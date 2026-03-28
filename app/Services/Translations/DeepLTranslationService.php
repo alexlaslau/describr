@@ -3,54 +3,75 @@
 namespace App\Services\Translations;
 
 use App\DTOs\TranslationResult;
-use App\Exceptions\TranslationFailedException;
+use App\Exceptions\DeepLApiException;
 use App\Interfaces\TranslationProviderInterface;
-use Illuminate\Support\Facades\Http;
+use App\Enums\DeepLEndpoint;
+use App\Enums\HttpMethod;
+use App\Services\Network\DeepLHttpClient;
 
 class DeepLTranslationService implements TranslationProviderInterface
 {
     public function __construct(
-        private readonly int $timeout = 20,
+        private readonly DeepLHttpClient $httpClient,
     ) {}
 
     public function translate(string $text, string $targetLanguage): TranslationResult
     {
-        try {
-            $response = Http::asForm()
-                ->timeout($this->timeout)
-                ->retry(3, 250, throw: false)
-                ->withHeaders([
-                    'Authorization' => 'DeepL-Auth-Key ' . config('services.deepl.key'),
-                ])
-                ->post(config('services.deepl.url'), [
-                    'text' => [$text],
-                    'target_lang' => strtoupper($targetLanguage),
-                    'tag_handling' => 'html',
-                    'preserve_formatting' => '1',
-                ]);
-        } catch (\Throwable $exception) {
-            throw new TranslationFailedException('DeepL request failed.', previous: $exception);
-        }
+        $response = $this->httpClient->request(
+            endpoint: DeepLEndpoint::TRANSLATE_TEXT,
+            method: HttpMethod::POST,
+            data: [
+                'text' => [$text],
+                'target_lang' => strtoupper($targetLanguage),
+                'show_billed_characters' => true,
+                'preserve_formatting' => true,
+            ],
+        );
 
-        if ($response->failed()) {
-            $message = data_get($response->json(), 'message')
-                ?? data_get($response->json(), 'detail')
-                ?? 'DeepL returned an unsuccessful response.';
+        $translatedText = data_get($response, 'translations.0.text');
+        $detectedSourceLanguage = data_get($response, 'translations.0.detected_source_language');
+        $billedCharacters = data_get($response, 'translations.0.billed_characters');
 
-            throw new TranslationFailedException($message);
-        }
-
-        $translatedText = data_get($response->json(), 'translations.0.text');
-        $detectedSourceLanguage = data_get($response->json(), 'translations.0.detected_source_language');
-
-        if (!$translatedText || !$detectedSourceLanguage) {
-            throw new TranslationFailedException('Invalid DeepL response.');
+        if (!$translatedText || !$detectedSourceLanguage || !$billedCharacters) {
+            throw new DeepLApiException('Missing DeepL response information.');
         }
 
         return new TranslationResult(
             text: $translatedText,
             detectedSourceLanguage: $detectedSourceLanguage,
-            billedCharacters: data_get($response->json(), 'billed_characters'),
+            billedCharacters: $billedCharacters,
+        );
+    }
+
+    public function sourceLanguages(): array
+    {
+        return $this->languages('source');
+    }
+
+    public function targetLanguages(): array
+    {
+        return $this->languages('target');
+    }
+
+    public function usage(): array
+    {
+        $response = $this->httpClient->request(
+            endpoint: DeepLEndpoint::USAGE,
+            method: HttpMethod::GET,
+        );
+
+        return [
+            'character_count' => data_get($response, 'character_count', 0),
+            'character_limit' => data_get($response, 'character_limit', 0),
+        ];
+    }
+
+    private function languages(string $type): array
+    {
+        return $this->httpClient->request(
+            endpoint: DeepLEndpoint::LANGUAGES,
+            method: HttpMethod::GET,
+            data: ['type' => $type],
         );
     }
 }

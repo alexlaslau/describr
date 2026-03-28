@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Product;
-use App\Http\Requests\ProductStoreRequest;
 use App\DTOs\ProductScrapingData;
+use App\Exceptions\TranslationFailedException;
+use App\Http\Requests\ProductStoreRequest;
+use App\Interfaces\TranslationProviderInterface;
+use App\Jobs\ScrapeProduct;
+use App\Models\Product;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
-use App\Jobs\ScrapeProduct;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 class ProductController extends Controller
@@ -19,7 +22,7 @@ class ProductController extends Controller
         ]);
     }
 
-    public function show(Product $product)
+    public function show(Product $product, TranslationProviderInterface $translationProvider)
     {
         abort_if($product->user_id !== Auth::id(), 403);
 
@@ -29,10 +32,19 @@ class ProductController extends Controller
             'generatedDescriptions' => fn ($query) => $query->latest()->with('translations'),
         ]);
 
+        try {
+            $usage = $translationProvider->usage();
+        } catch (TranslationFailedException $e) {
+            Log::error('[ProductController] Failed to load current translation usage.', [
+                'error' => $e->getMessage(),
+            ]);
+        }
+
         return Inertia::render('Products/Show', [
             'product' => $product,
             'config' => [
                 'translationLanguages' => config('app.describr.translation_languages'),
+                'translationUsage' => $usage ?? null,
             ],
         ]);
     }

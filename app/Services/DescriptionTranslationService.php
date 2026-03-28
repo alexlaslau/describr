@@ -2,9 +2,9 @@
 
 namespace App\Services;
 
+use App\Exceptions\TranslationFailedException;
 use App\Interfaces\TranslationProviderInterface;
 use App\Models\DescriptionTranslation;
-use Illuminate\Support\Facades\Log;
 
 class DescriptionTranslationService
 {
@@ -31,13 +31,12 @@ class DescriptionTranslationService
                 'status' => 'completed',
                 'source_language' => $result->detectedSourceLanguage,
                 'translated_text' => $result->text,
+                'billed_characters' => $result->billedCharacters,
                 'translated_at' => now(),
             ]);
 
-            return $translation->fresh();
+            return $translation;
         } catch (\Throwable $exception) {
-            Log::error("[DescriptionTranslationService] Translation failed for translation #{$translation->id}: {$exception->getMessage()}");
-
             $translation->update([
                 'status' => 'failed',
                 'error_message' => $exception->getMessage(),

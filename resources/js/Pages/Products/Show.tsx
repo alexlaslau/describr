@@ -139,6 +139,12 @@ function TranslationCard({ translation, languageLabel }: { translation: Descript
                     Translated {formatDate(translation.translated_at)}
                 </p>
             )}
+
+            {typeof translation.billed_characters === 'number' && (
+                <p className="mt-2 text-xs text-gray-400">
+                    DeepL billed {translation.billed_characters} characters.
+                </p>
+            )}
         </div>
     );
 }
@@ -176,7 +182,7 @@ function ProcessingBanner({ status }: { status: string }) {
     );
 }
 
-export default function Show({ product, config }: PageProps<{ product: Product; config: { translationLanguages: Record<string, string> } }>) {
+export default function Show({ product, config }: PageProps<{ product: Product; config: { translationLanguages: Record<string, string>; translationUsage: { character_count: number; character_limit: number } | null } }>) {
     const links = product.product_links ?? [];
     const descriptions = product.generated_descriptions ?? [];
     const images = product.images ?? [];
@@ -354,6 +360,12 @@ export default function Show({ product, config }: PageProps<{ product: Product; 
                                     })}
                                 </div>
                             </div>
+
+                            {config.translationUsage && (
+                                <div className="rounded-xl border border-gray-100 bg-gray-50 px-4 py-3 text-sm text-gray-600">
+                                    DeepL usage: {config.translationUsage.character_count.toLocaleString()} / {config.translationUsage.character_limit.toLocaleString()} characters this billing period.
+                                </div>
+                            )}
 
                             {translations.length > 0 && (
                                 <div className="grid gap-4 lg:grid-cols-2">

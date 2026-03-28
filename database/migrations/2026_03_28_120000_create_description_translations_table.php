@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('status', 20)->default('pending');
             $table->longText('translated_text')->nullable();
             $table->text('error_message')->nullable();
+            $table->unsignedInteger('billed_characters')->nullable();
             $table->timestamp('translated_at')->nullable();
             $table->timestamps();
 

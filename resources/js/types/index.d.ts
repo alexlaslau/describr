@@ -35,6 +35,7 @@ export interface DescriptionTranslation {
     status: 'pending' | 'processing' | 'completed' | 'failed';
     translated_text?: string | null;
     error_message?: string | null;
+    billed_characters?: number | null;
     translated_at?: string | null;
     created_at: string;
     updated_at: string;

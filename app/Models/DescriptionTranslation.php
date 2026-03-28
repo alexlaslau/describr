@@ -17,10 +17,13 @@ class DescriptionTranslation extends Model
         'provider',
         'status',
         'translated_text',
-        'error_message'
+        'error_message',
+        'billed_characters',
+        'translated_at',
     ];
 
     protected $casts = [
+        'billed_characters' => 'integer',
         'translated_at' => 'datetime',
     ];
 

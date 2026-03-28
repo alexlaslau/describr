@@ -6,6 +6,7 @@ use App\Models\DescriptionTranslation;
 use App\Services\DescriptionTranslationService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Support\Facades\Log;
 
 class TranslateGeneratedDescription implements ShouldQueue
 {
@@ -22,5 +23,16 @@ class TranslateGeneratedDescription implements ShouldQueue
     public function handle(DescriptionTranslationService $translationService): void
     {
         $translationService->translate($this->translation);
+    }
+
+    public function failed(\Throwable $exception): void
+    {
+        Log::error('[TranslateGeneratedDescription] Translation failed.', [
+            'translation_id' => $this->translation->id,
+            'generated_description_id' => $this->translation->generated_description_id,
+            'target_language' => $this->translation->target_language,
+            'provider' => $this->translation->provider,
+            'error' => $exception->getMessage(),
+        ]);
     }
 }
