@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProductImageController;
 use App\Http\Controllers\ProductTranslationController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Auth;
@@ -31,8 +32,8 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('products', ProductController::class)->only(['index', 'show', 'create', 'store']);
     Route::post('/products/{product}/translations', [ProductTranslationController::class, 'store'])->name('products.translations.store');
-    Route::get('/products/{product}/images/download-all', [ProductController::class, 'downloadAllImages'])->name('products.images.download-all');
-    Route::get('/products/{product}/images/{image}/download', [ProductController::class, 'downloadImage'])->name('products.images.download');
+    Route::get('/products/{product}/images/download-all', [ProductImageController::class, 'downloadAll'])->name('products.images.download-all');
+    Route::get('/products/{product}/images/{image}/download', [ProductImageController::class, 'download'])->name('products.images.download');
 });
 
 Route::fallback(function () {
