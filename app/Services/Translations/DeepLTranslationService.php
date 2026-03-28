@@ -8,6 +8,7 @@ use App\Interfaces\TranslationProviderInterface;
 use App\Enums\DeepLEndpoint;
 use App\Enums\HttpMethod;
 use App\Services\Network\DeepLHttpClient;
+use Illuminate\Support\Facades\Cache;
 
 class DeepLTranslationService implements TranslationProviderInterface
 {
@@ -60,23 +61,27 @@ class DeepLTranslationService implements TranslationProviderInterface
 
     public function usage(): array
     {
-        $response = $this->httpClient->request(
-            endpoint: DeepLEndpoint::USAGE,
-            method: HttpMethod::GET,
-        );
+        return Cache::remember('deepl:usage', now()->addMinutes(10), function (): array {
+            $response = $this->httpClient->request(
+                endpoint: DeepLEndpoint::USAGE,
+                method: HttpMethod::GET,
+            );
 
-        return [
-            'character_count' => data_get($response, 'character_count', 0),
-            'character_limit' => data_get($response, 'character_limit', 0),
-        ];
+            return [
+                'character_count' => data_get($response, 'character_count', 0),
+                'character_limit' => data_get($response, 'character_limit', 0),
+            ];
+        });
     }
 
     private function languages(string $type): array
     {
-        return $this->httpClient->request(
-            endpoint: DeepLEndpoint::LANGUAGES,
-            method: HttpMethod::GET,
-            data: ['type' => $type],
-        );
+        return Cache::remember("deepl:languages:{$type}", now()->addDay(), function () use ($type): array {
+            return $this->httpClient->request(
+                endpoint: DeepLEndpoint::LANGUAGES,
+                method: HttpMethod::GET,
+                data: ['type' => $type],
+            );
+        });
     }
 }
