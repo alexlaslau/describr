@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Exceptions\TranslationFailedException;
 use App\Interfaces\TranslationProviderInterface;
 use App\Models\DescriptionTranslation;
 
@@ -15,6 +14,7 @@ class DescriptionTranslationService
     public function translate(DescriptionTranslation $translation): DescriptionTranslation
     {
         $translation->update([
+            'provider' => $this->translationProvider->providerName(),
             'status' => 'processing',
             'error_message' => null,
         ]);

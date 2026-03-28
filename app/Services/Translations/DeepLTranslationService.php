@@ -15,6 +15,11 @@ class DeepLTranslationService implements TranslationProviderInterface
         private readonly DeepLHttpClient $httpClient,
     ) {}
 
+    public function providerName(): string
+    {
+        return 'deepl';
+    }
+
     public function translate(string $text, string $targetLanguage): TranslationResult
     {
         $response = $this->httpClient->request(

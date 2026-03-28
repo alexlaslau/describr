@@ -24,7 +24,6 @@ it('queues a DeepL translation for the latest product description', function () 
     $this->assertDatabaseHas('description_translations', [
         'generated_description_id' => $description->id,
         'target_language' => 'RO',
-        'provider' => 'deepl',
         'status' => 'pending',
     ]);
 

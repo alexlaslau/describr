@@ -18,7 +18,7 @@ class ProductTranslationController extends Controller
             'target_language' => 'required|string|in:' . implode(',', array_keys(config('app.describr.translation_languages'))),
         ]);
 
-        $latestDescription = $product->generatedDescriptions()->latest()->firstOrFail();
+        $latestDescription = $product->generatedDescriptions()->first();
 
         $targetLanguage = strtoupper($validated['target_language']);
 
@@ -36,7 +36,6 @@ class ProductTranslationController extends Controller
         $translation = DescriptionTranslation::create([
             'generated_description_id' => $latestDescription->id,
             'target_language' => $targetLanguage,
-            'provider' => 'deepl',
             'status' => 'pending',
         ]);
 

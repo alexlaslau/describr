@@ -29,7 +29,7 @@ class ProductController extends Controller
         $product->load([
             'productLinks',
             'images',
-            'generatedDescriptions' => fn ($query) => $query->latest()->with('translations'),
+            'generatedDescriptions' => fn ($query) => $query->with('translations'),
         ]);
 
         try {
