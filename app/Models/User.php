@@ -44,6 +44,11 @@ class User extends Authenticatable
             ->get();
     }
 
+    public function apiClients(): HasMany
+    {
+        return $this->hasMany(ApiClient::class);
+    }
+
     public function getProductStats(): array
     {
         return [
