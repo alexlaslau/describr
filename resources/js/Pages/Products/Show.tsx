@@ -12,15 +12,6 @@ const STATUS_STYLES: Record<string, { bg: string; text: string; label: string; d
     failed: { bg: 'bg-red-50', text: 'text-red-700', label: 'Failed', dot: 'bg-red-500' },
 };
 
-const LANGUAGE_FLAGS: Record<string, string> = {
-    RO: '🇷🇴',
-    EN: '🇬🇧',
-    DE: '🇩🇪',
-    FR: '🇫🇷',
-    IT: '🇮🇹',
-    ES: '🇪🇸',
-};
-
 function StatusBadge({ status }: { status: string }) {
     const style = STATUS_STYLES[status] || STATUS_STYLES.pending;
     return (
@@ -69,7 +60,7 @@ function formatStatusLabel(status: string) {
     return status.charAt(0).toUpperCase() + status.slice(1);
 }
 
-function TranslationCard({ productId, translation, languageLabel }: { productId: number; translation: DescriptionTranslation; languageLabel: string }) {
+function TranslationCard({ productId, translation, languageLabel, languageFlag }: { productId: number; translation: DescriptionTranslation; languageLabel: string; languageFlag?: string }) {
     const [expanded, setExpanded] = useState(false);
     const statusTone = {
         pending: 'border-amber-200 bg-amber-50 text-amber-700',
@@ -77,7 +68,7 @@ function TranslationCard({ productId, translation, languageLabel }: { productId:
         completed: 'border-emerald-200 bg-emerald-50 text-emerald-700',
         failed: 'border-red-200 bg-red-50 text-red-700',
     }[translation.status];
-    const flag = LANGUAGE_FLAGS[translation.target_language] ?? translation.target_language;
+    const flag = languageFlag ?? translation.target_language;
     const isLong = (translation.translated_text?.length ?? 0) > 320;
 
     return (
@@ -199,7 +190,7 @@ function ProcessingBanner({ status }: { status: string }) {
     );
 }
 
-export default function Show({ product, config }: PageProps<{ product: Product; config: { translationLanguages: Record<string, string>; translationUsage: { character_count: number; character_limit: number } | null } }>) {
+export default function Show({ product, config }: PageProps<{ product: Product; config: { translationLanguages: Record<string, { label: string; flag: string }>; translationUsage: { character_count: number; character_limit: number } | null } }>) {
     const links = product.product_links ?? [];
     const descriptions = product.generated_descriptions ?? [];
     const images = product.images ?? [];
@@ -363,12 +354,13 @@ export default function Show({ product, config }: PageProps<{ product: Product; 
                                     </p>
                                 </div>
                                 <div className="flex flex-wrap gap-2 sm:justify-end">
-                                    {availableTranslationLanguages.map(([code, label]) => {
+                                    {availableTranslationLanguages.map(([code, language]) => {
                                         const translation = translations.find((item) => item.target_language === code);
                                         const hasTranslation = Boolean(translation);
                                         const isBusy = translatingLanguage === code || translation?.status === 'pending' || translation?.status === 'processing';
                                         const isDisabled = isBusy || hasTranslation;
-                                        const flag = LANGUAGE_FLAGS[code] ?? code;
+                                        const label = language.label;
+                                        const flag = language.flag ?? code;
 
                                         return (
                                             <button
@@ -404,7 +396,8 @@ export default function Show({ product, config }: PageProps<{ product: Product; 
                                             key={translation.id}
                                             productId={product.id}
                                             translation={translation}
-                                            languageLabel={config.translationLanguages[translation.target_language] ?? translation.target_language}
+                                            languageLabel={config.translationLanguages[translation.target_language]?.label ?? translation.target_language}
+                                            languageFlag={config.translationLanguages[translation.target_language]?.flag}
                                         />
                                     ))}
                                 </div>

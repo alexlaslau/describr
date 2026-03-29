@@ -15,7 +15,7 @@ class ProductTranslationController extends Controller
         abort_if($product->user_id !== Auth::id(), 403);
 
         $validated = $request->validate([
-            'target_language' => 'required|string|in:' . implode(',', array_keys(config('app.describr.translation_languages'))),
+            'target_language' => 'required|string|in:' . implode(',', array_keys(config('app.describr.description_translation_languages'))),
         ]);
 
         $latestDescription = $product->generatedDescriptions()->first();

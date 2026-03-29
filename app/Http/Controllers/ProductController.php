@@ -42,7 +42,7 @@ class ProductController extends Controller
         return Inertia::render('Products/Show', [
             'product' => $product,
             'config' => [
-                'translationLanguages' => config('app.describr.translation_languages'),
+                'translationLanguages' => config('app.describr.description_translation_languages'),
                 'translationUsage' => $usage ?? null,
             ],
         ]);

@@ -148,12 +148,11 @@ return [
             'Urgent si direct',
             'Jucaus si amuzant',
         ],
-        'translation_languages' => [
-            'RO' => 'Romanian',
-            'DE' => 'German',
-            'FR' => 'French',
-            'ES' => 'Spanish',
-            'IT' => 'Italian',
+        'description_translation_languages' => [
+            'DE' => ['label' => 'German', 'flag' => '🇩🇪'],
+            'FR' => ['label' => 'French', 'flag' => '🇫🇷'],
+            'ES' => ['label' => 'Spanish', 'flag' => '🇪🇸'],
+            'IT' => ['label' => 'Italian', 'flag' => '🇮🇹'],
         ]
     ],
 ];
