@@ -1,5 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { DescriptionTranslation, Product, ProductLink, GeneratedDescription, ProductImage, PageProps } from '@/types';
+import { DescriptionTranslation, Product, ProductLink, ProductImage, PageProps } from '@/types';
 import { Head, Link, router } from '@inertiajs/react';
 import { useState, useEffect } from 'react';
 
@@ -10,6 +10,15 @@ const STATUS_STYLES: Record<string, { bg: string; text: string; label: string; d
     generating: { bg: 'bg-purple-50', text: 'text-purple-700', label: 'Generating', dot: 'bg-purple-500' },
     completed: { bg: 'bg-emerald-50', text: 'text-emerald-700', label: 'Completed', dot: 'bg-emerald-500' },
     failed: { bg: 'bg-red-50', text: 'text-red-700', label: 'Failed', dot: 'bg-red-500' },
+};
+
+const LANGUAGE_FLAGS: Record<string, string> = {
+    RO: '🇷🇴',
+    EN: '🇬🇧',
+    DE: '🇩🇪',
+    FR: '🇫🇷',
+    IT: '🇮🇹',
+    ES: '🇪🇸',
 };
 
 function StatusBadge({ status }: { status: string }) {
@@ -56,57 +65,29 @@ function formatDescription(text: string) {
     });
 }
 
-function DescriptionCard({ result }: { result: GeneratedDescription }) {
-    const [expanded, setExpanded] = useState(false);
-    const isLong = result.description.length > 300;
-
-    return (
-        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition-shadow hover:shadow-md">
-            <h4 className="text-sm font-semibold text-gray-900">{result.title}</h4>
-            <div className="mt-3">
-                {isLong && !expanded ? (
-                    <>
-                        <div className="text-sm leading-relaxed text-gray-600">
-                            {result.description.slice(0, 300)}…
-                        </div>
-                        <button
-                            onClick={() => setExpanded(true)}
-                            className="mt-2 font-medium text-sm text-indigo-600 hover:text-indigo-700"
-                        >
-                            Show more
-                        </button>
-                    </>
-                ) : (
-                    <>
-                        {formatDescription(result.description)}
-                        {isLong && (
-                            <button
-                                onClick={() => setExpanded(false)}
-                                className="mt-2 font-medium text-sm text-indigo-600 hover:text-indigo-700"
-                            >
-                                Show less
-                            </button>
-                        )}
-                    </>
-                )}
-            </div>
-        </div>
-    );
+function formatStatusLabel(status: string) {
+    return status.charAt(0).toUpperCase() + status.slice(1);
 }
 
 function TranslationCard({ productId, translation, languageLabel }: { productId: number; translation: DescriptionTranslation; languageLabel: string }) {
+    const [expanded, setExpanded] = useState(false);
     const statusTone = {
         pending: 'border-amber-200 bg-amber-50 text-amber-700',
         processing: 'border-blue-200 bg-blue-50 text-blue-700',
         completed: 'border-emerald-200 bg-emerald-50 text-emerald-700',
         failed: 'border-red-200 bg-red-50 text-red-700',
     }[translation.status];
+    const flag = LANGUAGE_FLAGS[translation.target_language] ?? translation.target_language;
+    const isLong = (translation.translated_text?.length ?? 0) > 320;
 
     return (
         <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
             <div className="flex items-start justify-between gap-3">
                 <div>
-                    <h4 className="text-sm font-semibold text-gray-900">{languageLabel}</h4>
+                    <h4 className="flex items-center gap-2 text-sm font-semibold text-gray-900">
+                        <span className="inline-flex translate-y-px items-center leading-none">{flag}</span>
+                        {languageLabel}
+                    </h4>
                     <p className="mt-1 text-xs text-gray-400">
                         DeepL{translation.source_language ? ` • detected ${translation.source_language}` : ''}
                     </p>
@@ -115,20 +96,46 @@ function TranslationCard({ productId, translation, languageLabel }: { productId:
                     {translation.status === 'completed' && translation.translated_text && (
                         <a
                             href={route('products.translations.pdf', { product: productId, translation: translation.id })}
-                            className="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs font-medium text-gray-600 transition hover:bg-gray-50 hover:text-gray-900"
+                            className="inline-flex h-8 items-center gap-1.5 rounded-full border border-gray-200 bg-gray-50 px-3 text-xs font-semibold text-gray-600 transition hover:border-gray-300 hover:bg-gray-100 hover:text-gray-900"
                         >
-                            Export PDF
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 16V4m0 12l-4-4m4 4l4-4M4 20h16" />
+                            </svg>
+                            PDF
                         </a>
                     )}
-                    <span className={`rounded-full border px-2.5 py-1 text-xs font-medium ${statusTone}`}>
-                        {translation.status}
+                    <span className={`inline-flex h-8 items-center rounded-full border px-3 text-xs font-semibold ${statusTone}`}>
+                        {formatStatusLabel(translation.status)}
                     </span>
+                    {isLong && (
+                        <button
+                            type="button"
+                            onClick={() => setExpanded((value) => !value)}
+                            className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-gray-200 bg-gray-50 text-gray-500 transition hover:border-gray-300 hover:bg-gray-100 hover:text-gray-700"
+                            aria-label={expanded ? 'Collapse translation' : 'Expand translation'}
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className={`h-3.5 w-3.5 transition-transform ${expanded ? 'rotate-180' : ''}`}
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                strokeWidth={2}
+                            >
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+                    )}
                 </div>
             </div>
 
             {translation.translated_text && (
-                <div className="mt-4 text-sm leading-relaxed text-gray-700 whitespace-pre-line">
-                    {translation.translated_text}
+                <div className="mt-4">
+                    <div className="text-sm leading-relaxed text-gray-700 whitespace-pre-line">
+                        {isLong && !expanded
+                            ? `${translation.translated_text.slice(0, 320)}...`
+                            : translation.translated_text}
+                    </div>
                 </div>
             )}
 
@@ -198,6 +205,7 @@ export default function Show({ product, config }: PageProps<{ product: Product; 
     const images = product.images ?? [];
     const latestDescription = descriptions[0];
     const translations = latestDescription?.translations ?? [];
+    const availableTranslationLanguages = Object.entries(config.translationLanguages).filter(([code]) => code !== 'RO');
     const isProcessing = PROCESSING_STATUSES.includes(product.status);
     const [copied, setCopied] = useState(false);
     const [translatingLanguage, setTranslatingLanguage] = useState<string | null>(null);
@@ -351,15 +359,16 @@ export default function Show({ product, config }: PageProps<{ product: Product; 
                                         DeepL Translation
                                     </h2>
                                     <p className="mt-1 text-sm text-gray-500">
-                                        Translate the latest generated description with a dedicated HTTP client integration.
+                                        Translate the latest Romanian description into other supported languages with a dedicated HTTP client integration.
                                     </p>
                                 </div>
-                                <div className="flex flex-wrap gap-2">
-                                    {Object.entries(config.translationLanguages).map(([code, label]) => {
+                                <div className="flex flex-wrap gap-2 sm:justify-end">
+                                    {availableTranslationLanguages.map(([code, label]) => {
                                         const translation = translations.find((item) => item.target_language === code);
                                         const hasTranslation = Boolean(translation);
                                         const isBusy = translatingLanguage === code || translation?.status === 'pending' || translation?.status === 'processing';
                                         const isDisabled = isBusy || hasTranslation;
+                                        const flag = LANGUAGE_FLAGS[code] ?? code;
 
                                         return (
                                             <button
@@ -367,12 +376,15 @@ export default function Show({ product, config }: PageProps<{ product: Product; 
                                                 type="button"
                                                 onClick={() => requestTranslation(code)}
                                                 disabled={isDisabled}
-                                                className={`rounded-lg border px-3 py-2 text-xs font-medium transition ${isDisabled
+                                                className={`inline-flex min-w-[9.5rem] items-center justify-center rounded-xl border px-4 py-2.5 text-xs font-semibold tracking-wide transition ${isDisabled
                                                     ? 'cursor-not-allowed border-gray-200 bg-gray-100 text-gray-400'
-                                                    : 'border-indigo-200 bg-indigo-50 text-indigo-700 hover:border-indigo-300 hover:bg-indigo-100'
+                                                    : 'border-indigo-200 bg-white text-indigo-700 shadow-sm shadow-indigo-100/40 hover:-translate-y-0.5 hover:border-indigo-300 hover:bg-indigo-50 hover:shadow-md'
                                                     }`}
                                             >
-                                                {isBusy ? `Translating ${code}...` : hasTranslation ? `${label} ready` : `Translate to ${label}`}
+                                                <span className="inline-flex items-center gap-2 leading-none">
+                                                    <span className="inline-flex translate-y-px items-center leading-none">{flag}</span>
+                                                    {isBusy ? `Translating ${code}...` : hasTranslation ? `${label} ready` : label}
+                                                </span>
                                             </button>
                                         );
                                     })}
@@ -517,25 +529,6 @@ export default function Show({ product, config }: PageProps<{ product: Product; 
                     )}
                 </section>
 
-                {/* Scrape Results */}
-                <section className="mt-12">
-                    <h2 className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
-                        </svg>
-                        Generated Descriptions
-                        <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-500">{descriptions.length}</span>
-                    </h2>
-                    {descriptions.length === 0 ? (
-                        <p className="mt-4 text-sm text-gray-400">No generated descriptions available yet.</p>
-                    ) : (
-                        <div className="mt-4 space-y-4">
-                            {descriptions.map((result: GeneratedDescription) => (
-                                <DescriptionCard key={result.id} result={result} />
-                            ))}
-                        </div>
-                    )}
-                </section>
             </div>
         </AuthenticatedLayout>
     );
