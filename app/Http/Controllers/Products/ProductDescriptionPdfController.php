@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Products;
 
+use App\Http\Controllers\Controller;
 use App\Models\DescriptionTranslation;
 use App\Models\Product;
-use App\Services\ProductDescriptionPdfService;
+use App\Services\Products\ProductDescriptionPdfService;
 use Illuminate\Support\Facades\Auth;
 
 class ProductDescriptionPdfController extends Controller

@@ -1,8 +1,8 @@
 <?php
 
-use App\Services\AIProviders\AIProviderFactory;
-use App\Services\AIProviders\OpenAIProvider;
-use App\Services\AIProviders\AnthropicProvider;
+use App\Services\Integrations\AI\AIProviderFactory;
+use App\Services\Integrations\AI\OpenAIProvider;
+use App\Services\Integrations\AI\AnthropicProvider;
 
 describe('AIProviderFactory', function () {
 

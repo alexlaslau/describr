@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\Api\ProductController;
-use App\Http\Controllers\Api\ProductDescriptionController;
+use App\Http\Controllers\Api\Products\ProductController;
+use App\Http\Controllers\Api\Products\ProductDescriptionController;
 use App\Http\Middleware\VerifyHmacSignature;
 use Illuminate\Support\Facades\Route;
 

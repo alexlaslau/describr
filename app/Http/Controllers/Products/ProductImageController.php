@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Products;
 
+use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\ProductImage;
-use App\Services\ProductImageDownloadService;
+use App\Services\Products\ProductImageDownloadService;
 use Illuminate\Support\Facades\Auth;
 
 class ProductImageController extends Controller

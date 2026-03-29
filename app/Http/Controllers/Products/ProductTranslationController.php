@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Products;
 
+use App\Http\Controllers\Controller;
 use App\Jobs\TranslateGeneratedDescription;
 use App\Models\DescriptionTranslation;
 use App\Models\Product;

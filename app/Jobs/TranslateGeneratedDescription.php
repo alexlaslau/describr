@@ -3,7 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\DescriptionTranslation;
-use App\Services\DescriptionTranslationService;
+use App\Services\Products\DescriptionTranslationService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Log;

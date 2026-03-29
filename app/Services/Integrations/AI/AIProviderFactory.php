@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\AIProviders;
+namespace App\Services\Integrations\AI;
 
 use InvalidArgumentException;
 use App\Interfaces\AIProviderInterface;

@@ -1,13 +1,12 @@
 <?php
 
-namespace App\Services\Translations;
+namespace App\Services\Integrations\DeepL;
 
 use App\DTOs\TranslationResult;
 use App\Exceptions\DeepLApiException;
 use App\Interfaces\TranslationProviderInterface;
 use App\Enums\DeepLEndpoint;
 use App\Enums\HttpMethod;
-use App\Services\Network\DeepLHttpClient;
 use Illuminate\Support\Facades\Cache;
 
 class DeepLTranslationService implements TranslationProviderInterface

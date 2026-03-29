@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\AIProviders;
+namespace App\Services\Integrations\AI;
 
 use App\Interfaces\AIProviderInterface;
 use Illuminate\Support\Facades\Http;

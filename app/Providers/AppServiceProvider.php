@@ -4,10 +4,10 @@ namespace App\Providers;
 
 use App\Interfaces\ScraperInterface;
 use App\Interfaces\TranslationProviderInterface;
+use App\Services\Integrations\DeepL\DeepLTranslationService;
+use App\Services\Scraping\DomCrawlerScraper;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
-use App\Services\Scrapers\DomCrawlerScraper;
-use App\Services\Translations\DeepLTranslationService;
 
 class AppServiceProvider extends ServiceProvider
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Scrapers {
+namespace App\Services\Scraping {
     function getimagesize(string $url): array|false
     {
         // Needed to overwrite PHP's getimagesize function because it would make real HTTP calls to mock urls
@@ -11,7 +11,7 @@ namespace App\Services\Scrapers {
 
 namespace {
 
-use App\Services\Scrapers\DomCrawlerScraper;
+use App\Services\Scraping\DomCrawlerScraper;
 use Illuminate\Support\Facades\Http;
 
 uses(Tests\TestCase::class);

@@ -3,7 +3,7 @@
 namespace App\Jobs;
 
 use App\DTOs\ProductScrapingData;
-use App\Services\AIProviderService;
+use App\Services\Integrations\AI\AIProviderService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 

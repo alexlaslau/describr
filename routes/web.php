@@ -1,10 +1,10 @@
 <?php
 
-use App\Http\Controllers\ProductController;
-use App\Http\Controllers\ProductDescriptionPdfController;
-use App\Http\Controllers\ProductImageController;
-use App\Http\Controllers\ProductTranslationController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Products\ProductController;
+use App\Http\Controllers\Products\ProductDescriptionPdfController;
+use App\Http\Controllers\Products\ProductImageController;
+use App\Http\Controllers\Products\ProductTranslationController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;

@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Products;
 
 use App\DTOs\ProductScrapingData;
 use App\Exceptions\TranslationFailedException;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductStoreRequest;
 use App\Interfaces\TranslationProviderInterface;
 use App\Jobs\ScrapeProduct;

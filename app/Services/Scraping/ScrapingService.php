@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Scraping;
 
 use App\Models\ProductLink;
 use App\Models\ProductImage;

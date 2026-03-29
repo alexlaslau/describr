@@ -3,7 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Models\ApiClient;
-use App\Services\HmacSignatureService;
+use App\Services\Integrations\Hmac\HmacSignatureService;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;

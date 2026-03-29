@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Network;
+namespace App\Services\Integrations\DeepL;
 
 use App\Enums\DeepLEndpoint;
 use App\Enums\HttpMethod;

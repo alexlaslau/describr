@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Scrapers;
+namespace App\Services\Scraping;
 
 use App\DTOs\ScrapedData;
 use App\Interfaces\ScraperInterface;

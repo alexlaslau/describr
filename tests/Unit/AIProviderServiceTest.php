@@ -1,7 +1,7 @@
 <?php
 
-use App\Services\AIProviderService;
-use App\Services\AIProviders\AIProviderFactory;
+use App\Services\Integrations\AI\AIProviderFactory;
+use App\Services\Integrations\AI\AIProviderService;
 use App\DTOs\ProductScrapingData;
 use App\Interfaces\AIProviderInterface;
 use App\Models\Product;

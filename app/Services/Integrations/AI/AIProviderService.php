@@ -1,12 +1,11 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Integrations\AI;
 
 use App\Models\GeneratedDescription;
 use App\DTOs\ProductScrapingData;
 use App\Interfaces\AIProviderInterface;
 use App\Exceptions\EmptyScrapedContentException;
-use App\Services\AIProviders\AIProviderFactory;
 use App\Events\DescriptionGenerated;
 use App\Events\DescriptionFailed;
 
