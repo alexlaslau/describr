@@ -35,4 +35,15 @@ class TranslateGeneratedDescription implements ShouldQueue
             'error' => $exception->getMessage(),
         ]);
     }
+
+    public function tags(): array
+    {
+        return [
+            'product:'.$this->translation->productId(),
+            'translation:'.$this->translation->id,
+            'language:'.$this->translation->target_language,
+            'provider:'.$this->translation->provider,
+            'pipeline:translate',
+        ];
+    }
 }

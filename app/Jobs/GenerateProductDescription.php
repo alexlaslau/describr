@@ -28,4 +28,13 @@ class GenerateProductDescription implements ShouldQueue
     {
         $this->scrapingData->product->update(['status' => 'failed']);
     }
+
+    public function tags(): array
+    {
+        return [
+            'product:'.$this->scrapingData->product->id,
+            'provider:'.$this->scrapingData->aiProvider,
+            'pipeline:generate',
+        ];
+    }
 }

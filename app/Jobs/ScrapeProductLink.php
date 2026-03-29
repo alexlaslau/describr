@@ -28,4 +28,13 @@ class ScrapeProductLink implements ShouldQueue
 
         $service->scrapeLink($this->link);
     }
+
+    public function tags(): array
+    {
+        return [
+            'product:'.$this->link->product_id,
+            'link:'.$this->link->id,
+            'pipeline:scrape',
+        ];
+    }
 }

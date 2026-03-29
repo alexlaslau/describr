@@ -43,4 +43,13 @@ class ScrapeProduct implements ShouldQueue
             })
             ->dispatch();
     }
+
+    public function tags(): array
+    {
+        return [
+            'product:'.$this->scrapingData->product->id,
+            'provider:'.$this->scrapingData->aiProvider,
+            'pipeline:scrape',
+        ];
+    }
 }
