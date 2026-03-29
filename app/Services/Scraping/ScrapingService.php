@@ -34,12 +34,12 @@ class ScrapingService
                 ]);
             }
         } catch (\Exception $e) {
-            \Log::error("[ScrapingService] Scraping failed for link #{$link->id} ({$link->url}): {$e->getMessage()}");
-
             $link->update([
                 'status' => 'failed',
                 'error_message' => $e->getMessage(),
             ]);
+
+            throw $e;
         }
     }
 }

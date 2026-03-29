@@ -26,7 +26,11 @@ class ScrapeProductLink implements ShouldQueue
             return;
         }
 
-        $service->scrapeLink($this->link);
+        try {
+            $service->scrapeLink($this->link);
+        } catch (\Exception $e) {
+            \Log::warning("[ScrapeProductLink] Scraping failed for link #{$this->link->id} ({$this->link->url}): {$e->getMessage()}");
+        }
     }
 
     public function tags(): array

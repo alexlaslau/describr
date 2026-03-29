@@ -33,13 +33,18 @@ class ScrapeProduct implements ShouldQueue
             ->toArray();
 
         Bus::batch($jobs)
-            ->then(function (Batch $batch) use ($scrapingData) {
-                $scrapingData->product->update(['status' => 'scraped']);
+            ->then(function (Batch $batch) use ($scrapingData, $product) {
+                $allFailed = $product->productLinks()
+                    ->where('status', '!=', 'failed')
+                    ->doesntExist();
 
+                if ($allFailed) {
+                    $product->update(['status' => 'failed']);
+                    return;
+                }
+
+                $product->update(['status' => 'scraped']);
                 ProductScraped::dispatch($scrapingData);
-            })
-            ->catch(function (Batch $batch, \Throwable $e) use ($product) {
-                $product->update(['status' => 'failed']);
             })
             ->dispatch();
     }
