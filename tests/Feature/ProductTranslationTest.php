@@ -17,13 +17,13 @@ it('queues a DeepL translation for the latest product description', function () 
 
     $this->actingAs($user)
         ->post(route('products.translations.store', $product), [
-            'target_language' => 'RO',
+            'target_language' => 'DE',
         ])
         ->assertRedirect();
 
     $this->assertDatabaseHas('description_translations', [
         'generated_description_id' => $description->id,
-        'target_language' => 'RO',
+        'target_language' => 'DE',
         'status' => 'pending',
     ]);
 
@@ -40,7 +40,7 @@ it('forbids translating another users product', function () {
 
     $this->actingAs($intruder)
         ->post(route('products.translations.store', $product), [
-            'target_language' => 'RO',
+            'target_language' => 'DE',
         ])
         ->assertForbidden();
 
@@ -55,7 +55,7 @@ it('does not queue a duplicate translation for the same language', function () {
     $description = GeneratedDescription::factory()->for($product)->create();
 
     $description->translations()->create([
-        'target_language' => 'RO',
+        'target_language' => 'DE',
         'provider' => 'deepl',
         'status' => 'completed',
         'translated_text' => 'Descriere tradusa.',
@@ -64,12 +64,12 @@ it('does not queue a duplicate translation for the same language', function () {
     $this->actingAs($user)
         ->from(route('products.show', $product))
         ->post(route('products.translations.store', $product), [
-            'target_language' => 'RO',
+            'target_language' => 'DE',
         ])
         ->assertRedirect(route('products.show', $product))
         ->assertSessionHasErrors('target_language');
 
-    expect($description->translations()->where('target_language', 'RO')->count())->toBe(1);
+    expect($description->translations()->where('target_language', 'DE')->count())->toBe(1);
 
     Queue::assertNothingPushed();
 });
