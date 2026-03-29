@@ -3,10 +3,10 @@
 namespace App\Services\Integrations\Translations;
 
 use App\DTOs\TranslationResult;
-use App\Exceptions\DeepLApiException;
-use App\Interfaces\TranslationProviderInterface;
 use App\Enums\DeepLEndpoint;
 use App\Enums\HttpMethod;
+use App\Exceptions\DeepLApiException;
+use App\Interfaces\TranslationProviderInterface;
 use Illuminate\Support\Facades\Cache;
 
 class DeepLTranslationService implements TranslationProviderInterface

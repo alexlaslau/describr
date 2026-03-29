@@ -10,10 +10,12 @@ use Illuminate\Foundation\Queue\Queueable;
 
 class ScrapeProductLink implements ShouldQueue
 {
-    use Queueable, Batchable;
+    use Batchable, Queueable;
 
     public int $tries = 3;
+
     public array $backoff = [100, 200];
+
     public int $timeout = 60;
 
     public function __construct(
@@ -36,8 +38,8 @@ class ScrapeProductLink implements ShouldQueue
     public function tags(): array
     {
         return [
-            'product:'.$this->link->product_id,
-            'link:'.$this->link->id,
+            'product:' . $this->link->product_id,
+            'link:' . $this->link->id,
             'pipeline:scrape',
         ];
     }

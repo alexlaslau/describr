@@ -84,12 +84,14 @@ class DomCrawlerScraper implements ScraperInterface
 
             if (isset($data['@type']) && $data['@type'] === 'Product') {
                 $jsonLd = $data;
+
                 return;
             }
             if (isset($data['@graph']) && is_array($data['@graph'])) {
                 foreach ($data['@graph'] as $item) {
                     if (isset($item['@type']) && $item['@type'] === 'Product') {
                         $jsonLd = $item;
+
                         return;
                     }
                 }
@@ -147,6 +149,7 @@ class DomCrawlerScraper implements ScraperInterface
                 if (!str_starts_with($img['src'], 'http')) {
                     $img['src'] = rtrim($baseUrl, '/') . '/' . ltrim($img['src'], '/');
                 }
+
                 return $img;
             })
             ->filter(fn ($img) => !str_contains(strtolower($img['src']), 'icon'))
@@ -168,6 +171,7 @@ class DomCrawlerScraper implements ScraperInterface
                     }
                 } catch (\Throwable $e) {
                     Log::error('[DomCrawlerScraper] - Failed to get image size: ' . $e->getMessage());
+
                     return false;
                 }
 

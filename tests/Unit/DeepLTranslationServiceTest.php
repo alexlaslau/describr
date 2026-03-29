@@ -11,7 +11,7 @@ beforeEach(function () {
     config()->set('services.deepl.key', 'deepl-test-key');
     config()->set('services.deepl.base_url', 'https://api-free.deepl.com');
 
-    $this->service = new DeepLTranslationService(new DeepLHttpClient());
+    $this->service = new DeepLTranslationService(new DeepLHttpClient);
 });
 
 it('translates text with the Laravel HTTP client', function () {

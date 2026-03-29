@@ -4,7 +4,6 @@ namespace App\Services\Products;
 
 use App\Models\Product;
 use App\Models\ProductImage;
-use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 
 class ProductImageDownloadService
@@ -30,13 +29,13 @@ class ProductImageDownloadService
         abort_if($product->images->isEmpty(), 404);
 
         $zipPath = tempnam(sys_get_temp_dir(), 'images_') . '.zip';
-        $zip = new \ZipArchive();
+        $zip = new \ZipArchive;
         $zip->open($zipPath, \ZipArchive::CREATE);
 
         foreach ($product->images as $image) {
             $response = Http::get($image->url);
 
-            if (! $response->successful()) {
+            if (!$response->successful()) {
                 continue;
             }
 

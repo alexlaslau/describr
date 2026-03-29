@@ -2,12 +2,12 @@
 
 namespace App\Services\Integrations\AI;
 
-use App\Models\GeneratedDescription;
 use App\DTOs\ProductScrapingData;
-use App\Interfaces\AIProviderInterface;
-use App\Exceptions\EmptyScrapedContentException;
-use App\Events\DescriptionGenerated;
 use App\Events\DescriptionFailed;
+use App\Events\DescriptionGenerated;
+use App\Exceptions\EmptyScrapedContentException;
+use App\Interfaces\AIProviderInterface;
+use App\Models\GeneratedDescription;
 
 class AIProviderService
 {
@@ -29,7 +29,7 @@ class AIProviderService
             $scrapedContent = $product->getFullParsedText();
 
             if (empty(trim($scrapedContent))) {
-                throw new EmptyScrapedContentException();
+                throw new EmptyScrapedContentException;
             }
 
             $prompt = $this->buildPrompt($product->name, $scrapedContent, $scrapingData);

@@ -39,7 +39,7 @@ class ScrapedData
             $parts[] = "OG Description: {$this->ogDescription}";
         }
 
-        //Fallback if no jsonLd is present
+        // Fallback if no jsonLd is present
         if (!$this->jsonLd && $this->bodyText) {
             $parts[] = "Body Content:\n{$this->bodyText}";
         }

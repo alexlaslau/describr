@@ -2,9 +2,9 @@
 
 namespace App\Services\Scraping;
 
-use App\Models\ProductLink;
-use App\Models\ProductImage;
 use App\Interfaces\ScraperInterface;
+use App\Models\ProductImage;
+use App\Models\ProductLink;
 
 class ScrapingService
 {

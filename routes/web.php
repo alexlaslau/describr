@@ -1,10 +1,10 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Products\ProductController;
 use App\Http\Controllers\Products\ProductDescriptionPdfController;
 use App\Http\Controllers\Products\ProductImageController;
 use App\Http\Controllers\Products\ProductTranslationController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -43,8 +43,8 @@ Route::fallback(function () {
     abort(404, 'The page you searched for does not exist.');
 });
 
-Route::get('/test-error', function() {
+Route::get('/test-error', function () {
     throw new \RuntimeException("Custom exception triggered");
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

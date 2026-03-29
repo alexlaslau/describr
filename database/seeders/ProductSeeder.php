@@ -15,7 +15,7 @@ class ProductSeeder extends Seeder
     public function run(): void
     {
         $user = User::first();
-        
+
         Product::factory()
             ->count(3)
             ->completed()

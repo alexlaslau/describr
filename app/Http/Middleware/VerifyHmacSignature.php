@@ -31,19 +31,19 @@ class VerifyHmacSignature
             ->where('status', 'active')
             ->first();
 
-        if (! $apiClient) {
+        if (!$apiClient) {
             return response()->json([
                 'message' => 'Unknown API client.',
             ], 401);
         }
 
-        if (! $this->signatureService->isFresh($timestamp)) {
+        if (!$this->signatureService->isFresh($timestamp)) {
             return response()->json([
                 'message' => 'Expired HMAC signature.',
             ], 401);
         }
 
-        if (! $this->signatureService->isValid(
+        if (!$this->signatureService->isValid(
             $request->method(),
             $request->path(),
             $timestamp,

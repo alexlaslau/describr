@@ -153,6 +153,6 @@ return [
             'FR' => ['label' => 'French', 'flag' => '🇫🇷'],
             'ES' => ['label' => 'Spanish', 'flag' => '🇪🇸'],
             'IT' => ['label' => 'Italian', 'flag' => '🇮🇹'],
-        ]
+        ],
     ],
 ];

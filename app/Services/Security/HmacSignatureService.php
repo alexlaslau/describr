@@ -23,7 +23,7 @@ class HmacSignatureService
 
     public function isFresh(string $timestamp): bool
     {
-        if (! ctype_digit($timestamp)) {
+        if (!ctype_digit($timestamp)) {
             return false;
         }
 

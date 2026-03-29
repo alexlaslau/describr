@@ -12,7 +12,9 @@ class GenerateProductDescription implements ShouldQueue
     use Queueable;
 
     public int $tries = 3;
+
     public array $backoff = [100, 200];
+
     public int $timeout = 180;
 
     public function __construct(
@@ -32,8 +34,8 @@ class GenerateProductDescription implements ShouldQueue
     public function tags(): array
     {
         return [
-            'product:'.$this->scrapingData->product->id,
-            'provider:'.$this->scrapingData->aiProvider,
+            'product:' . $this->scrapingData->product->id,
+            'provider:' . $this->scrapingData->aiProvider,
             'pipeline:generate',
         ];
     }

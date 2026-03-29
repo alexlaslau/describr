@@ -11,7 +11,7 @@ class GeneratedDescription extends Model
 {
     use HasFactory;
 
-    protected $hidden =[
+    protected $hidden = [
         'prompt_settings',
     ];
 

@@ -5,7 +5,6 @@ namespace App\Services\Integrations\Translations;
 use App\Enums\DeepLEndpoint;
 use App\Enums\HttpMethod;
 use App\Exceptions\DeepLApiException;
-use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
 
 class DeepLHttpClient
@@ -14,8 +13,7 @@ class DeepLHttpClient
         DeepLEndpoint $endpoint,
         HttpMethod $method,
         array $data = [],
-    ): array
-    {
+    ): array {
         try {
             $options = match ($method) {
                 HttpMethod::GET => ['query' => $data],

@@ -24,4 +24,4 @@ return new class extends Migration
     {
         Schema::dropIfExists('generated_descriptions');
     }
-}; 
+};

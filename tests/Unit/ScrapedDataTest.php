@@ -66,7 +66,7 @@ describe('ScrapedData', function () {
         });
 
         it('returns empty string when all fields are null', function () {
-            $data = new ScrapedData();
+            $data = new ScrapedData;
 
             expect($data->toPromptText())->toBe('');
         });
@@ -115,7 +115,7 @@ describe('ScrapedData', function () {
         });
 
         it('returns nulls for missing fields', function () {
-            $data = new ScrapedData();
+            $data = new ScrapedData;
 
             $array = $data->toArray();
 

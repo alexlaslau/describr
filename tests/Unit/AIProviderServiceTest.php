@@ -1,12 +1,12 @@
 <?php
 
+use App\DTOs\ProductScrapingData;
+use App\Exceptions\EmptyScrapedContentException;
+use App\Interfaces\AIProviderInterface;
+use App\Models\GeneratedDescription;
+use App\Models\Product;
 use App\Services\Integrations\AI\AIProviderFactory;
 use App\Services\Integrations\AI\AIProviderService;
-use App\DTOs\ProductScrapingData;
-use App\Interfaces\AIProviderInterface;
-use App\Models\Product;
-use App\Models\GeneratedDescription;
-use App\Exceptions\EmptyScrapedContentException;
 use Illuminate\Support\Facades\Queue;
 
 uses(Tests\TestCase::class);
@@ -50,7 +50,7 @@ describe('AIProviderService', function () {
 
         it('builds prompt with product name and scraped content from template', function () {
             $product = makeProduct('Super Widget', 1, 'Scraped data about the widget');
-            $product->shouldReceive('generatedDescriptions->create')->andReturn(new GeneratedDescription());
+            $product->shouldReceive('generatedDescriptions->create')->andReturn(new GeneratedDescription);
 
             $this->mockModel->shouldReceive('generate')
                 ->once()
@@ -65,7 +65,7 @@ describe('AIProviderService', function () {
 
         it('injects target audience and tone into the prompt', function () {
             $product = makeProduct('Settings Test', 10, 'Some content');
-            $product->shouldReceive('generatedDescriptions->create')->andReturn(new GeneratedDescription());
+            $product->shouldReceive('generatedDescriptions->create')->andReturn(new GeneratedDescription);
 
             $this->mockModel->shouldReceive('generate')
                 ->once()
@@ -97,7 +97,7 @@ describe('AIProviderService', function () {
                         && $data['prompt_settings']['tone'] === 'Calm si de incredere'
                         && $data['prompt_settings']['custom_details'] === 'Livrare gratuita';
                 })
-                ->andReturn(new GeneratedDescription());
+                ->andReturn(new GeneratedDescription);
 
             $this->mockModel->shouldReceive('generate')->andReturn('A description');
 
@@ -137,10 +137,11 @@ describe('AIProviderService', function () {
                     if (isset($data['status'])) {
                         $statusUpdates[] = $data['status'];
                     }
+
                     return true;
                 });
 
-            $product->shouldReceive('generatedDescriptions->create')->andReturn(new GeneratedDescription());
+            $product->shouldReceive('generatedDescriptions->create')->andReturn(new GeneratedDescription);
 
             $this->mockModel->shouldReceive('generate')->andReturn('A description');
 
@@ -161,6 +162,7 @@ describe('AIProviderService', function () {
                     if (isset($data['status'])) {
                         $statusUpdates[] = $data['status'];
                     }
+
                     return true;
                 });
 
@@ -179,7 +181,7 @@ describe('AIProviderService', function () {
     describe('return value', function () {
 
         it('returns a GeneratedDescription instance on success', function () {
-            $description = new GeneratedDescription();
+            $description = new GeneratedDescription;
             $description->title = 'Widget';
             $description->description = 'A nice widget';
 
@@ -194,7 +196,7 @@ describe('AIProviderService', function () {
         });
 
         it('returns a GeneratedDescription with the correct title and description', function () {
-            $description = new GeneratedDescription();
+            $description = new GeneratedDescription;
             $description->title = 'Gadget';
             $description->description = 'An amazing gadget';
 
@@ -225,7 +227,7 @@ describe('AIProviderService', function () {
             $service = new AIProviderService($mockFactory);
 
             $product = makeProduct('Test', 8, 'Content');
-            $product->shouldReceive('generatedDescriptions->create')->andReturn(new GeneratedDescription());
+            $product->shouldReceive('generatedDescriptions->create')->andReturn(new GeneratedDescription);
 
             $service->generate(makeScrapingData($product, ['aiProvider' => 'anthropic']));
         });
@@ -243,7 +245,7 @@ describe('AIProviderService', function () {
             $service = new AIProviderService($mockFactory);
 
             $product = makeProduct('Test', 9, 'Content');
-            $product->shouldReceive('generatedDescriptions->create')->andReturn(new GeneratedDescription());
+            $product->shouldReceive('generatedDescriptions->create')->andReturn(new GeneratedDescription);
 
             $service->generate(makeScrapingData($product));
         });

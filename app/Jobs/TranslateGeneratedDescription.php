@@ -13,7 +13,9 @@ class TranslateGeneratedDescription implements ShouldQueue
     use Queueable;
 
     public int $tries = 3;
+
     public array $backoff = [60, 180];
+
     public int $timeout = 120;
 
     public function __construct(
@@ -39,10 +41,10 @@ class TranslateGeneratedDescription implements ShouldQueue
     public function tags(): array
     {
         return [
-            'product:'.$this->translation->productId(),
-            'translation:'.$this->translation->id,
-            'language:'.$this->translation->target_language,
-            'provider:'.$this->translation->provider,
+            'product:' . $this->translation->productId(),
+            'translation:' . $this->translation->id,
+            'language:' . $this->translation->target_language,
+            'provider:' . $this->translation->provider,
             'pipeline:translate',
         ];
     }

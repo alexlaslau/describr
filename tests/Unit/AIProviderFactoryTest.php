@@ -1,13 +1,13 @@
 <?php
 
 use App\Services\Integrations\AI\AIProviderFactory;
-use App\Services\Integrations\AI\OpenAIProvider;
 use App\Services\Integrations\AI\AnthropicProvider;
+use App\Services\Integrations\AI\OpenAIProvider;
 
 describe('AIProviderFactory', function () {
 
     beforeEach(function () {
-        $this->factory = new AIProviderFactory();
+        $this->factory = new AIProviderFactory;
     });
 
     it('returns an OpenAIProvider for openai', function () {
