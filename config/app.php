@@ -153,7 +153,7 @@ return [
             'DE' => 'German',
             'FR' => 'French',
             'ES' => 'Spanish',
+            'IT' => 'Italian',
         ]
     ],
-
 ];
