@@ -289,15 +289,18 @@ export default function Show({ product, config }: PageProps<{ product: Product; 
                                 <div className="flex items-center gap-2">
                                     <a
                                         href={route('products.descriptions.pdf', { product: product.id })}
-                                        className="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-600 transition hover:bg-gray-50 hover:text-gray-900"
+                                        className="inline-flex h-8 items-center gap-1.5 rounded-full border border-gray-200 bg-gray-50 px-3 text-xs font-semibold text-gray-600 transition hover:border-gray-300 hover:bg-gray-100 hover:text-gray-900"
                                     >
-                                        Export PDF
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 16V4m0 12l-4-4m4 4l4-4M4 20h16" />
+                                        </svg>
+                                        PDF
                                     </a>
                                     <button
                                         onClick={copyDescription}
-                                        className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-all ${copied
-                                            ? 'bg-emerald-50 text-emerald-600 border border-emerald-200'
-                                            : 'bg-gray-50 text-gray-500 border border-gray-200 hover:bg-gray-100 hover:text-gray-700'
+                                        className={`inline-flex h-8 items-center gap-1.5 rounded-full border px-3 text-xs font-semibold transition-all ${copied
+                                            ? 'border-emerald-200 bg-emerald-50 text-emerald-600'
+                                            : 'border-gray-200 bg-gray-50 text-gray-500 hover:border-gray-300 hover:bg-gray-100 hover:text-gray-700'
                                             }`}
                                     >
                                         {copied ? (
