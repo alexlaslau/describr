@@ -4,7 +4,7 @@ use App\Models\ApiClient;
 use App\Models\GeneratedDescription;
 use App\Models\Product;
 use App\Models\User;
-use App\Services\Integrations\Hmac\HmacSignatureService;
+use App\Services\Security\HmacSignatureService;
 
 beforeEach(function () {
     config()->set('app.describr.api_hmac_ttl_seconds', 300);

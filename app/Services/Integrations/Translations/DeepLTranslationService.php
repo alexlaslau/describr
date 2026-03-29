@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Integrations\DeepL;
+namespace App\Services\Integrations\Translations;
 
 use App\DTOs\TranslationResult;
 use App\Exceptions\DeepLApiException;

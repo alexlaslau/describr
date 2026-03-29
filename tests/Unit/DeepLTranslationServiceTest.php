@@ -1,8 +1,8 @@
 <?php
 
 use App\Exceptions\TranslationFailedException;
-use App\Services\Integrations\DeepL\DeepLHttpClient;
-use App\Services\Integrations\DeepL\DeepLTranslationService;
+use App\Services\Integrations\Translations\DeepLHttpClient;
+use App\Services\Integrations\Translations\DeepLTranslationService;
 use Illuminate\Support\Facades\Http;
 
 uses(Tests\TestCase::class);

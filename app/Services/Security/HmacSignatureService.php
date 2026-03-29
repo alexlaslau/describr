@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Integrations\Hmac;
+namespace App\Services\Security;
 
 class HmacSignatureService
 {

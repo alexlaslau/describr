@@ -3,7 +3,7 @@
 use App\Jobs\ScrapeProduct;
 use App\Models\ApiClient;
 use App\Models\User;
-use App\Services\Integrations\Hmac\HmacSignatureService;
+use App\Services\Security\HmacSignatureService;
 use Illuminate\Support\Facades\Queue;
 
 beforeEach(function () {
