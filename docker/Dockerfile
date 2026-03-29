@@ -4,7 +4,7 @@ FROM php:8.4-fpm
 RUN apt-get update && apt-get install -y \
     git curl zip unzip libpng-dev libonig-dev libxml2-dev \
     libzip-dev libcurl4-openssl-dev nginx supervisor nodejs npm \
-    && docker-php-ext-install pdo_mysql mbstring xml curl zip bcmath \
+    && docker-php-ext-install pdo_mysql mbstring xml curl zip bcmath pcntl \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install Composer
