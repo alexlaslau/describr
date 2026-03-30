@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Facades\Cache;
 
 class User extends Authenticatable
 {
@@ -37,27 +36,8 @@ class User extends Authenticatable
         return $this->hasMany(Product::class);
     }
 
-    public function getProducts()
-    {
-        return $this->products()
-            ->withLinkCount()
-            ->latest()
-            ->get();
-    }
-
     public function apiClients(): HasMany
     {
         return $this->hasMany(ApiClient::class);
-    }
-
-    public function getProductStats(): array
-    {
-        return Cache::remember("user:{$this->id}:product-stats", now()->addMinutes(5), function (): array {
-            return [
-                'total' => $this->products()->count(),
-                'completed' => $this->products()->completed()->count(),
-                'inProgress' => $this->products()->inProgress()->count(),
-            ];
-        });
     }
 }

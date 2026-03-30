@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use App\Interfaces\ScraperInterface;
 use App\Interfaces\TranslationProviderInterface;
+use App\Repositories\Contracts\ProductRepositoryInterface;
+use App\Repositories\Eloquent\EloquentProductRepository;
 use App\Services\Integrations\Translations\DeepLTranslationService;
 use App\Services\Scraping\DomCrawlerScraper;
 use Illuminate\Support\Facades\Vite;
@@ -15,6 +17,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->bind(ScraperInterface::class, DomCrawlerScraper::class);
         $this->app->bind(TranslationProviderInterface::class, DeepLTranslationService::class);
+        $this->app->bind(ProductRepositoryInterface::class, EloquentProductRepository::class);
     }
 
     public function boot(): void

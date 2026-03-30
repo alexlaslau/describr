@@ -6,15 +6,17 @@ use App\DTOs\ProductScrapingData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductStoreRequest;
 use App\Jobs\ScrapeProduct;
-use App\Models\Product;
+use App\Repositories\Contracts\ProductRepositoryInterface;
 
 class ProductController extends Controller
 {
+    public function __construct(private ProductRepositoryInterface $products) {}
+
     public function store(ProductStoreRequest $request)
     {
         $apiClient = $request->attributes->get('api_client');
 
-        $product = Product::createWithLinks(
+        $product = $this->products->createWithLinks(
             $apiClient->user,
             $request->validated('name'),
             $request->cleanedLinks(),

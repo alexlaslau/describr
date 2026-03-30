@@ -9,16 +9,19 @@ use App\Http\Requests\ProductStoreRequest;
 use App\Interfaces\TranslationProviderInterface;
 use App\Jobs\ScrapeProduct;
 use App\Models\Product;
+use App\Repositories\Contracts\ProductRepositoryInterface;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 class ProductController extends Controller
 {
+    public function __construct(private ProductRepositoryInterface $products) {}
+
     public function index()
     {
         return Inertia::render('Products/Index', [
-            'products' => Auth::user()->getProducts(),
+            'products' => $this->products->getForUser(Auth::user()),
         ]);
     }
 
@@ -26,10 +29,10 @@ class ProductController extends Controller
     {
         abort_if($product->user_id !== Auth::id(), 403);
 
-        $product->load([
+        $product = $this->products->findWithRelations($product->id, [
             'productLinks',
             'images',
-            'generatedDescriptions' => fn ($query) => $query->with('translations'),
+            'generatedDescriptions.translations',
         ]);
 
         try {
@@ -62,7 +65,7 @@ class ProductController extends Controller
 
     public function store(ProductStoreRequest $request)
     {
-        $product = Product::createWithLinks(
+        $product = $this->products->createWithLinks(
             Auth::user(),
             $request->validated('name'),
             $request->cleanedLinks(),
